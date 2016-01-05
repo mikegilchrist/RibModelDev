@@ -1,3 +1,10 @@
+# R stuff
+*.Rdata
+*.rst
+*.Rda
+*.Rdat
+*.Rout
+
 # Compiled Object files
 *.slo
 *.lo
