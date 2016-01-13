@@ -19,7 +19,7 @@ geneAssignment <- sample(c(1,2), size = length(genome), replace = TRUE, prob = c
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, split.serine = TRUE, mixture.definition = mixDef)
 #parameter <- initializeParameterObject(restart.file = "5001_simulated_allUnique.rst")
 
-samples <- 100
+samples <- 10
 thining <- 10
 adaptiveWidth <- 10
 divergence.iteration <- 0
