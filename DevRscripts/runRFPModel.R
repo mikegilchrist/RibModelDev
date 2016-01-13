@@ -12,11 +12,11 @@ sphi_init <- 2
 numMixtures <- 1
 mixDef <- "allUnique"
 geneAssignment <- c(rep(1, genome$getGenomeSize()))
-parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model= "RFP", split.serine = TRUE, mixture.definition = mixDef)
-#parameter <- initializeParameterObject(model="RFP", restart.file="20restartFile.rst")
+#parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model= "RFP", split.serine = TRUE, mixture.definition = mixDef)
+parameter <- initializeParameterObject(model="RFP", restart.file="30restartFile.rst")
 
 # initialize MCMC object
-samples <- 20
+samples <- 40
 thining <- 10
 adaptiveWidth <- 10
 mcmc <- initializeMCMCObject(samples=samples, thining=thining, adaptive.width=adaptiveWidth, 
@@ -44,8 +44,8 @@ system.time(
 
 # plots different aspects of trace
 trace <- parameter$getTraceObject()
-writeParameterObject(parameter, file="RFPObject.Rdat")
-writeMCMCObject(mcmc, file="MCMCObject.Rdat")
+writeParameterObject(parameter, file="RFPObject2.Rdat")
+writeMCMCObject(mcmc, file="MCMCObject2.Rdat")
 
 
 pdf("RFP_Genome_allUnique_startCSP_True_startPhi_true_adaptSphi_True.pdf")
@@ -101,8 +101,8 @@ i <- 1
 for (i in 1:61)
 {
   codon <- codonList[i]
-  alphaList[i] <- parameter$getAlphaPosteriorMeanForCodon(cat, samples * 0.5, codon)
-  lambdaPrimeList[i] <- parameter$getLambdaPrimePosteriorMeanForCodon(cat, samples * 0.5, codon)
+  alphaList[i] <- parameter$getCodonSpecificPosteriorMean(cat, samples * 0.5, codon, 0)
+  lambdaPrimeList[i] <- parameter$getCodonSpecificPosteriorMean(cat, samples * 0.5, codon, 1)
   waitingTimes[i] <- alphaList[i] * lambdaPrimeList[i]
 }
 

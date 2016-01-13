@@ -1,0 +1,100 @@
+parameterObject.R
+--------------------------------------------------------------------------------------
+*Implement writeCSV for the RFP and FONSE models.
+
+*Function "submatrices" needs some commenting explaining what is going on.
+
+*Function "splitMatrix" needs some commenting explaining what is going on.
+
+*"initializeCovarianceMatricies" need changes once covariance work is complete.
+
+*Implement writeParameterObject for the FONSE model.
+
+*Implement "loadFONSEParameter."
+
+*Change the implementation of the loadParameterObject functions to where multiple 
+objects can be read in and concatinated.
+
+*Should add more error checking be done in "initializeParameterObject." Currently some 
+checks are made, but should the error checking be fool proof to prevent R crashes.
+
+*Add mutation prior to writeParameterObject for ROC.
+
+
+
+
+mcmcObject.R
+---------------------------------------------------------------------------------------
+*Should we provide a default arguemtn for number of samples?
+
+*Make sure the default values in R match the default values in C++. 
+Not a necessary check, but would be nice for consistancy.
+
+*We have est.expression as an argument to our initializeMCMCObject function, while
+everywhere, such as other function calls and print statements in the code, we 
+call this synthesisRate. Should be changed for consistancy?
+
+*Details should be looked at to make sure information given is accurate. 
+
+*Error checking should be performed at the beginning of the function to make sure no invalid 
+values have been entered in.
+
+*What is the purpose of having the runMCMC call wrapped?
+
+*Error check values in runMCMC.
+
+
+
+MCMCAlgorithm.cpp
+-----------------------------------------------------------------------------------------
+*We had previously decided calling constructors from other constructors was causing
+odd behavior (at least the way we had it done). We have our zero argument
+constructor in MCMC do this and should be changed. 
+
+
+Other things
+-----------------------------------------------------------------------------------------
+
+
+*Pure virtual functions shared between 2 or more models should have an implementation that
+is overwritten by other non-similar models.
+
+*Codon Table
+
+*Test all modes (allUnique, selectionShared, mutationShared, custom).
+
+*Change trace to one object, get rid of heirarchy.
+
+*Unit testing
+
+*remove warnings 
+
+*implement additional models (NSE, PANSE)
+
+*acf graphs for hyper parameters
+
+*Fix restart files for FONSE model.
+
+*Test that (see Selac code) needs to get path for file names.
+
+
+
+BUGS
+-----------------------------------------------------------------------------------------
+*Group list is broken in working code
+
+*R crashes when getGene is used on an empty gene.
+
+*OpenMP pragma accept/reject phi does not work in R: R crash. Problem reducing loops with
+arrays.
+
+*R CMD check fails: namespace. 
+
+*Change output to have R output. Need some generic function to wrap R printing.
+
+*S epsilon doesn't converge to correct value.
+
+*deletes on dynamic array(s) may not actually be called.
+
+*simulatedAllUniqueR.fasta last gene codon counts = 0
+

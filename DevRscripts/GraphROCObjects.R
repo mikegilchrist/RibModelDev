@@ -1,13 +1,13 @@
-library(ribModel)
 rm(list=ls())
+library(ribModel)
 
-parameter <- new(ROCParameter)
-parameter <- loadParameterObject(parameter, "ROCParameter.Rdat", "ROC")
-mcmc <- loadMCMCObject("MCMCObject.Rdat")
+parameter <- loadParameterObject(c("ROCParameter1.Rdat", "ROCParameter2.Rdat"))
+mcmc <- loadMCMCObject(c("MCMCObject1.Rdat", "MCMCObject2.Rdat"))
 genome <- initializeGenomeObject(file = "../data/realGenomes/Skluyveri.fasta")
-
-
-
+model <- initializeModelObject(parameter, "ROC", with.phi=FALSE)
+numMixtures <- length(trace$getSynthesisRateTrace())
+mcmc1 <- loadMCMCObject(c("MCMCObject1.Rdat"))
+mcmc2 <- loadMCMCObject(c("MCMCObject2.Rdat"))
 # plots different aspects of trace
 trace <- parameter$getTraceObject()
 
@@ -27,7 +27,7 @@ expressionValues <- unlist(lapply(1:genome$getGenomeSize(), function(geneIndex){
   parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples, geneIndex, expressionCategory)
 }))
 expressionValues <- log10(expressionValues)
-obs.phi <- log10(read.table("../data//twoMixtures/simulatedAllUniqueR_phi.csv", sep=",", header=T)[, 2])
+obs.phi <- log10(read.table("../data/twoMixtures/simulatedAllUniqueR_phi.csv", sep=",", header=T)[, 2])
 plot(NULL, NULL, xlim=range(expressionValues, na.rm = T) + c(-0.1, 0.1), ylim=range(obs.phi) + c(-0.1, 0.1), 
      main = "Synthesis Rate", xlab = "true values", ylab = "estimated values")
 upper.panel.plot(obs.phi[mixtureAssignment == 1], expressionValues[mixtureAssignment == 1], col="black")

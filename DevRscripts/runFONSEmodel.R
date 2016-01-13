@@ -7,7 +7,6 @@ phi.file <- "../data/FONSE/genome_2000.phi.csv"
 mut.file <- "../data/FONSE/S.cer.mut.csv"
 sel.file <- "../data/FONSE/selection2ref.csv"
 
-
 from.good.values <- FALSE
 genome <- initializeGenomeObject(genome.file)
 
@@ -21,7 +20,7 @@ mixDef <- "allUnique"
 geneAssignment <- rep(1,length(genome))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model="FONSE", split.serine = TRUE,
                                        mixture.definition = mixDef)
-
+#parameter <- initializeParameterObject(model="FONSE", restart.file="10restartFile.rst")
 # initialize MCMC object
 samples <- 10
 thining <- 10
@@ -44,6 +43,8 @@ system.time(
   runMCMC(mcmc, genome, model, 4)
 )
 
+writeParameterObject(parameter, file="FONSEObject1.Rdat")
+writeMCMCObject(mcmc, file="MCMCObject1.Rdat")
 #plots log likelihood trace, possibly other mcmc diagnostics in the future
 pdf("Fonse3MCMC.pdf")
 plot(mcmc)
@@ -52,7 +53,6 @@ acf(loglik.trace)
 
 # plots different aspects of trace
 trace <- parameter$getTraceObject()
-writeTraces(parameter, file="FONSETraces.Rdat")
 plot(trace, what = "MixtureProbability")
 plot(trace, what = "SPhi")
 plot(trace, what = "ExpectedPhi")
