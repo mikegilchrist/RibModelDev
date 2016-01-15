@@ -4,6 +4,7 @@
 *.Rda
 *.Rdat
 *.Rout
+*.Rhistory
 
 # Compiled Object files
 *.slo
