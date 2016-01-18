@@ -1,34 +1,25 @@
 rm(list=ls())
 library(ribModel)
 
+genome <- initializeGenomeObject(file = 
+         "../data/rfp/rfp.counts.by.codon.and.gene.GSE63789.wt.csv", FALSE)
 
 
-#read genome
-genome <- initializeGenomeObject(file = "../data/rfp/rfp.counts.by.codon.and.gene.GSE63789.wt.csv", FALSE)
-
-
-#initialize parameter object
-sphi_init <- 2
+sphi_init <- c(2)
 numMixtures <- 1
 mixDef <- "allUnique"
 geneAssignment <- c(rep(1, genome$getGenomeSize()))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model= "RFP", split.serine = TRUE, mixture.definition = mixDef)
-#parameter <- initializeParameterObject(model="RFP", restart.file="20restartFile.rst")
+#parameter <- initializeParameterObject(model="RFP", restart.file="30restartFile.rst")
 
-# initialize MCMC object
-samples <- 20
+samples <- 40
 thining <- 10
 adaptiveWidth <- 10
 mcmc <- initializeMCMCObject(samples=samples, thining=thining, adaptive.width=adaptiveWidth, 
                              est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE)
 
-
-# get model object
 model <- initializeModelObject(parameter, "RFP")
 setRestartSettings(mcmc, "restartFile.rst", 10, TRUE)
-
-
-#run mcmc on genome with parameter using model
 system.time(
   runMCMC(mcmc, genome, model, 8)
 )
@@ -44,8 +35,8 @@ system.time(
 
 # plots different aspects of trace
 trace <- parameter$getTraceObject()
-writeParameterObject(parameter, file="RFPObject.Rdat")
-writeMCMCObject(mcmc, file="MCMCObject.Rdat")
+writeParameterObject(parameter, file="RFPObject1.Rdat")
+writeMCMCObject(mcmc, file="MCMCObject1.Rdat")
 
 
 pdf("RFP_Genome_allUnique_startCSP_True_startPhi_true_adaptSphi_True.pdf")
@@ -88,23 +79,43 @@ dev.off()
 
 
 
-pdf("correlationBetweenAlphaAndLambdaPrime.pdf")
+pdf("ConfidenceIntervalsForAlphaAndLambdaPrime.pdf")
 cat <- 1
 proposal <- FALSE
 alphaList <- numeric (61)
 lambdaPrimeList <- numeric (61)
 waitingTimes <- numeric(61)
+alpha.ci <- matrix(0, ncol=2, nrow=61)
+lambdaPrime.ci <- matrix(0, ncol=2, nrow=61)
 phiList <- numeric(genome$getGenomeSize())
 ids <- numeric(genome$getGenomeSize())
 codonList <- codons()
-i <- 1
 for (i in 1:61)
 {
   codon <- codonList[i]
-  alphaList[i] <- parameter$getAlphaPosteriorMeanForCodon(cat, samples * 0.5, codon)
-  lambdaPrimeList[i] <- parameter$getLambdaPrimePosteriorMeanForCodon(cat, samples * 0.5, codon)
+  alphaList[i] <- parameter$getCodonSpecificPosteriorMean(cat, samples * 0.5, codon, 0)
+  alphaTrace <- trace$getCodonSpecificParameterTraceByMixtureElementForCodon(1, codon, 0)
+  alpha.ci[i,] <- quantile(alphaTrace[(samples * 0.5):samples], probs = c(0.025,0.975))
+  
+  
+  lambdaPrimeList[i] <- parameter$getCodonSpecificPosteriorMean(cat, samples * 0.5, codon, 1)
+  lambdaPrimeTrace <- trace$getCodonSpecificParameterTraceByMixtureElementForCodon(1, codon, 1)
+  lambdaPrime.ci[i,] <- quantile(lambdaPrimeTrace[(samples * 0.5):samples], probs = c(0.025,0.975))
   waitingTimes[i] <- alphaList[i] * lambdaPrimeList[i]
 }
+plot(NULL, NULL, xlim=range(1:61, na.rm = T), ylim=range(alpha.ci), 
+     main = "Confidence Intervals for Alpha Parameter", xlab = "Codons", 
+     ylab = "Estimated values", axes=F) 
+confidenceInterval.plot(x = 1:61, y = alphaList, sd.y = alpha.ci)
+axis(2)
+axis(1, tck = 0.02, labels = codonList[1:61], at=1:61, las=2, cex.axis=.6)
+
+plot(NULL, NULL, xlim=range(1:61, na.rm = T), ylim=range(lambdaPrime.ci), 
+     main = "Confidence Intervals for LambdaPrime Parameter", xlab = "Codons", 
+     ylab = "Estimated values", axes=F) 
+confidenceInterval.plot(x = 1:61, y = lambdaPrimeList, sd.y = lambdaPrime.ci)
+axis(2)
+axis(1, tck = 0.02, labels = codonList[1:61], at=1:61, las=2, cex.axis=.6)
 
 for (geneIndex in 1:genome$getGenomeSize()) {
   phiList[geneIndex] <- parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples * 0.5, geneIndex, 1)
@@ -117,13 +128,6 @@ for (i in 1:genome$getGenomeSize())
 }
 
 
-
-
-
-
-plot(NULL, NULL, xlim=range(alphaList, na.rm = T), ylim=range(lambdaPrimeList), 
-     main = "Correlation Between Alpha and Lambda Prime", xlab = "alpha", ylab = "lambdaPrime")
-upper.panel.plot(alphaList, lambdaPrimeList)
 
 
 #corrolation between RFPModel and Premal's data
@@ -157,172 +161,3 @@ write.table(m, "RFPLambdaPrimeValues.csv", sep = ",", quote = F, row.names = F, 
 m <- matrix(c(ids, phiList, phiList), ncol = 3, byrow = FALSE)
 colnames(m) <- c("Gene", "PhiValue", "PhiValue")
 write.table(m, "RFPPhiValues.csv", sep = ",", quote = F, row.names = F, col.names = T)
-
-
-
-
-
-
-
-
-
-
-
-load("RFPtraces1.Rdat")
-curloglikeTrace <- mcmc$getLogLikelihoodTrace()
-cursPhiTraces <- trace$getSphiTraces()
-cursphiAcceptRatTrace <- trace$getSphiAcceptanceRatioTrace()
-cursynthRateTrace <- trace$getSynthesisRateTrace()
-cursynthAcceptRatTrace <- trace$getSynthesisRateAcceptanceRatioTrace()
-curmixAssignTrace <- trace$getMixutreAssignmentTrace()
-curmixProbTrace <- trace$getMixtureProbabilitiesTrace()
-curcspAcceptRatTrace <- trace$getCspAcceptanceRatioTrace()
-curalphaTrace <- trace$getAlphaParameterTrace()
-curlambdaPrimeTrace <- trace$getLambdaPrimeParameterTrace()
-
-max <- samples + 1
-fullAlphaTrace <- alphaTrace
-for (size in 1:length(curalphaTrace))
-{
-  for (csp in 1:length(curalphaTrace[[size]]))
-  {
-    fullAlphaTrace[[size]][[csp]] <- c(fullAlphaTrace[[size]][[csp]], curalphaTrace[[size]][[csp]][2:max])
-  }
-}
-
-fullLambdaPrimeTrace <- lambdaPrimeTrace
-for (size in 1:length(curlambdaPrimeTrace))
-{
-  for (csp in 1:length(curlambdaPrimeTrace[[size]]))
-  {
-    fullLambdaPrimeTrace[[size]][[csp]] <- c(fullLambdaPrimeTrace[[size]][[csp]], curlambdaPrimeTrace[[size]][[csp]][2:max])
-  }
-}
-
-fullcspAcceptRatTrace <- cspAcceptRatTrace
-for (size in 1:length(curcspAcceptRatTrace))
-{
-  fullcspAcceptRatTrace[[size]]<- c(fullcspAcceptRatTrace[[size]], curcspAcceptRatTrace[[size]])
-}
-
-fullmixProbTrace <- mixProbTrace
-for (size in 1:length(curmixProbTrace))
-{
-  fullmixProbTrace[[size]]<- c(fullmixProbTrace[[size]], curmixProbTrace[[size]][2:max])
-}
-
-
-fullmixAssignTrace <- mixAssignTrace
-for (size in 1:length(curmixAssignTrace))
-{
-  fullmixAssignTrace[[size]]<- c(fullmixAssignTrace[[size]], curmixAssignTrace[[size]][2:max])
-}
-
-fullsynthAcceptRatTrace <- synthAcceptRatTrace
-for (size in 1:length(cursynthAcceptRatTrace))
-{
-  for (csp in 1:length(cursynthAcceptRatTrace[[size]]))
-  {
-    fullsynthAcceptRatTrace[[size]][[csp]] <- c(fullsynthAcceptRatTrace[[size]][[csp]], cursynthAcceptRatTrace[[size]][[csp]])
-  }
-}
-
-
-fullsynthRateTrace <- synthRateTrace
-for (size in 1:length(cursynthRateTrace))
-{
-  for (csp in 1:length(cursynthRateTrace[[size]]))
-  {
-    fullsynthRateTrace[[size]][[csp]] <- c(fullsynthRateTrace[[size]][[csp]], cursynthRateTrace[[size]][[csp]][2:max])
-  }
-}
-
-
-
-fullsphiAcceptRatTrace <- sphiAcceptRatTrace
-fullsphiAcceptRatTrace <- c(fullsphiAcceptRatTrace, cursphiAcceptRatTrace)
-
-
-
-
-fullsPhiTraces <- sPhiTraces
-for (size in 1:length(cursPhiTraces))
-{
-  fullsPhiTraces[[size]]<- c(fullsPhiTraces[[size]], cursPhiTraces[[size]][2:max])
-}
-
-max <- max - 1
-fullloglikeTrace <- loglikeTrace
-fullloglikeTrace <- c(fullloglikeTrace, curloglikeTrace[2:max])
-
-
-
-
-# Write the traces for the run.
-
-
-# -------Sphi Traces ----------#
-sPhiTraces <- trace$getSphiTraces()
-m <- matrix(nrow = samples + 1, ncol = length(sPhiTraces), byrow = FALSE)
-colnames(m) <- c("Mixture 1") 
-for (i in 1:length(sPhiTraces)){
-  m[,i] <- sPhiTraces[[i]]
-}
-write.table(m, "SphiTraces.csv", sep = ",", quote = F, row.names = F, col.names = T)
-# -------End Sphi Traces ------#
-
-
-# -------Sphi Acceptance Ratio Trace -------#
-sphiAcceptRatTrace <- trace$getSphiAcceptanceRatioTrace()
-m <- matrix(nrow = 1, ncol = length(sphiAcceptRatTrace), byrow = FALSE)
-names <- paste(c(rep("sample", length(sphiAcceptRatTrace))), 1:length(sphiAcceptRatTrace))
-colnames(m) <- names
-m[1,] <- sphiAcceptRatTrace
-write.table(m, "SphiAcceptanceRatioTrace.csv", sep = ",", quote = F, row.names = F, col.names = T)
-# -------End Sphi Acceptance Raiot Trace ------#
-
-
-# -------Synthesis Rate Trace ----------#
-synthRateTrace <- trace$getSynthesisRateTrace()
-for (cat in 1:length(synthRateTrace)){
-  m <- matrix(nrow = samples+1, ncol = length(synthRateTrace[[cat]]), byrow = FALSE)
-  names <- paste(c(rep("gene", length(synthRateTrace[[cat]]))), 1:length(synthRateTrace[[cat]]))
-  colnames(m) <- names
-  for (i in 1:length(synthRateTrace[[cat]])){
-    m[,i] <- synthRateTrace[[cat]][[i]]
-  }
-  fileName <- paste("SynthesisRateTrace_ExpressionCategory", cat, "csv", sep = ".")
-  write.table(m, file = fileName, sep = ",", quote = F, row.names = F, col.names = T)
-}
-# -------End Synthesis Rate Trace ------#
-
-
-# ---------Synthesis Acceptance Ratio Trace ---------#
-synthAcceptRatTrace <- trace$getSynthesisRateAcceptanceRatioTrace()
-for (cat in 1:length(synthAcceptRatTrace)){
-  m <- matrix(nrow = length(synthAcceptRatTrace), ncol = length(synthAcceptRatTrace[[cat]]), byrow = FALSE)
-  names <- paste(c(rep("gene", length(synthAcceptRatTrace[[cat]]))), 1:length(synthAcceptRatTrace[[cat]]))
-  colnames(m) <- names
-  for (i in 1:length(synthAcceptRatTrace[[cat]])){
-    m[,i] <- synthAcceptRatTrace[[cat]][[i]]
-  }
-  fileName <- paste("SynthesisRateAcceptanceRatioTrace_ExpressionCategory", cat, "csv", sep = ".")
-  write.table(m, file = fileName, sep = ",", quote = F, row.names = F, col.names = T)
-}
-# ---------End Synthesis Acceptance Ratio Trace --------#
-
-
-# --------- Mixture Assignment Trace -------#
-
-mixAssignTrace <- trace$getmixtureP
-
-# --------- End Mixture Assignment Trace -------#
-groupList <- parameter$getGroupList()
-m <- matrix(nrow = samples + 1, ncol = length(groupList))
-
-colnames(m) <- c(groupList)
-for (codon in groupList){
-  tmp <- trace$getAlphaParameterTraceByMixtureElementForCodon(1, codon)
-  m[,codon] <- tmp
-}
-

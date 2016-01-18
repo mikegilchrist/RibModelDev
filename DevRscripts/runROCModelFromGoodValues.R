@@ -16,14 +16,14 @@ if (with.phi) {
 }
  
 #initialize parameter object
-sphi_init <- 1
+sphi_init <- c(1,1,1)
 numMixtures <- 3
 mixDef <- "allUnique"
 geneAssignment <- c(rep(1,448), rep(1,513), rep(2,457), rep(1, 3403), rep(3, 500)) # S.kluyveri full genome
 #geneAssignment <- c(rep(1,448), rep(1,513), rep(2,457))
 #geneAssignment <- rep(1,328) # human brain
 #geneAssignment <- c(rep(1,200), rep(2,800))
-geneAssignment <- sample(x = c(1,2), size = 806, replace = T) #c(rep(1,400), rep(2,406))
+#geneAssignment <- sample(x = c(1,2), size = 806, replace = T) #c(rep(1,400), rep(2,406))
 #geneAssignment <- sample(x = c(1,2), size = 806, replace = T) #c(rep(1,400), rep(2,406))
 #geneAssignment <- rep(1,2000)
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, split.serine = TRUE, mixture.definition = mixDef)
@@ -35,7 +35,7 @@ phivals <- parameter$readPhiValues( "../ribModel/data/simulatedAllUniqueR_phi.cs
 parameter$initMutationCategories(c("../ribModel/data/simulated_mutation0.csv", "../ribModel/data/simulated_mutation1.csv") , 2)
 parameter$initSelectionCategories(c("../ribModel/data/simulated_selection0.csv", "../ribModel/data/simulated_selection1.csv") , 2)
 # initialize MCMC object
-samples <- 6000
+samples <- 10
 thining <- 10
 adaptiveWidth <- 10
 divergence.iteration <- 0

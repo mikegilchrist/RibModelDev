@@ -18,12 +18,12 @@ geneAssignment <- c(rep(1,448), rep(1,513), rep(2,457), rep(1, 3403), rep(3, 500
 #geneAssignment <- c(rep(1,448), rep(1,513), rep(2,457))
 #geneAssignment <- c(rep(1,448), rep(2,457))
 #geneAssignment <- c(rep(1,500), rep(2,500))
-#parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, split.serine = TRUE, mixture.definition = mixDef)
-parameter <- initializeParameterObject(model="ROC", restart.file="30restartFile.rst")
+parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, split.serine = TRUE, mixture.definition = mixDef)
+#parameter <- initializeParameterObject(model="ROC", restart.file="10restartFile.rst")
 
 
 # initialize MCMC object
-samples <- 30
+samples <- 10
 thining <- 10
 adaptiveWidth <- 10
 mcmc <- initializeMCMCObject(samples=samples, thining=thining, adaptive.width=adaptiveWidth, 
@@ -45,12 +45,12 @@ system.time(
 
 # plots different aspects of trace
 trace <- parameter$getTraceObject()
-writeParameterObject(parameter, file="ROCParameter.Rdat")
-writeMCMCObject(mcmc, file="MCMCObject.Rdat")
+writeParameterObject(parameter, file="ROCParameter2.Rdat")
+writeMCMCObject(mcmc, file="MCMCObject1.Rdat")
 pdf("simulated_Genome_allUnique_startCSP_True_startPhi_true_adaptSphi_True.pdf")
 plot(mcmc)
 plot(trace, what = "MixtureProbability")
-plot(trace, what = "SPhi")
+plot(trace, what = "Sphi")
 plot(trace, what = "ExpectedPhi")
 dev.off()
 plot(trace, what = "Expression", geneIndex = 905)

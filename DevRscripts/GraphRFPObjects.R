@@ -2,11 +2,13 @@ rm(list=ls())
 library(ribModel)
 
 
-parameter <- loadParameterObject("RFPObject.Rdat")
-mcmc <- loadMCMCObject("MCMCObject.Rdat")
+parameter <- loadParameterObject(c("RFPObject1.Rdat", "RFPObject2.Rdat"))
+mcmc <- loadMCMCObject(c("MCMCObject1.Rdat", "MCMCObject2.Rdat"))
+genome <- initializeGenomeObject(file = "../data/rfp/rfp.counts.by.codon.and.gene.GSE63789.wt.csv", FALSE)
+
 
 trace <- parameter$getTraceObject()
-
+samples <- mcmc$getSamples()
 pdf("test1.pdf")
 
 
@@ -48,21 +50,36 @@ dev.off()
 
 
 pdf("test3.pdf")
-samples <- length(trace$getAlphaParameterTrace()[[1]][[1]])
 cat <- 1
 proposal <- FALSE
 alphaList <- numeric (61)
 lambdaPrimeList <- numeric (61)
 waitingTimes <- numeric(61)
+phiList <- numeric(genome$getGenomeSize())
+ids <- numeric(genome$getGenomeSize())
 codonList <- codons()
 i <- 1
 for (i in 1:61)
 {
   codon <- codonList[i]
-  alphaList[i] <- parameter$getAlphaPosteriorMeanForCodon(cat, samples * 0.5, codon)
-  lambdaPrimeList[i] <- parameter$getLambdaPrimePosteriorMeanForCodon(cat, samples * 0.5, codon)
+  alphaList[i] <- parameter$getCodonSpecificPosteriorMean(cat, samples * 0.5, codon, 0)
+  lambdaPrimeList[i] <- parameter$getCodonSpecificPosteriorMean(cat, samples * 0.5, codon, 1)
   waitingTimes[i] <- alphaList[i] * lambdaPrimeList[i]
 }
+
+for (geneIndex in 1:genome$getGenomeSize()) {
+  phiList[geneIndex] <- parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples * 0.5, geneIndex, 1)
+}
+
+for (i in 1:genome$getGenomeSize())
+{
+  g <- genome$getGeneByIndex(i, FALSE)
+  ids[i] <- g$id
+}
+
+
+
+
 
 
 plot(NULL, NULL, xlim=range(alphaList, na.rm = T), ylim=range(lambdaPrimeList), 
