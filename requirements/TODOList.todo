@@ -1,3 +1,23 @@
+Gene.cpp
+-------------------------------------------------------------------------------------
+*Problem with setSequence(), both on C and R side. While the issue should never 
+arise on the C side, it could on R. If a gene already has a sequence and a user tries
+to set a new sequence (ie, no clear call on the Gene, since we do not expose that in R),
+then we have an issue with the data stored in the SequenceSummary object. If you imagine
+the gene has a sequence X, and the user then calls setSequence(X) after that, the sequence
+will be correctly represented (regardless of if the X = previous X), but the data
+in geneData would be doubled. Should we be calling clear on the SequenceSummary object
+when we do this?
+
+
+*Problem with what the expected value of cleanSeq() should be on an invalid, or
+messy, sequence. Imagine AAATTTNGCYRNKROTTN and run through the code and see what
+you would expect the sequence variable to hold afterwards.
+
+
+*Decide if we want to move the two public variables to private for consistency.
+
+
 parameterObject.R
 --------------------------------------------------------------------------------------
 *Implement writeCSV for the RFP and FONSE models.
