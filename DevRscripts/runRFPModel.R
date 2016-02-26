@@ -8,7 +8,7 @@ genome <- initializeGenomeObject(file =
 sphi_init <- c(2)
 numMixtures <- 1
 mixDef <- "allUnique"
-geneAssignment <- c(rep(1, genome$getGenomeSize()))
+geneAssignment <- c(rep(1, genome$getGenomeSize(F)))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model= "RFP", split.serine = TRUE, mixture.definition = mixDef)
 #parameter <- initializeParameterObject(model="RFP", restart.file="30restartFile.rst")
 
@@ -87,8 +87,8 @@ lambdaPrimeList <- numeric (61)
 waitingTimes <- numeric(61)
 alpha.ci <- matrix(0, ncol=2, nrow=61)
 lambdaPrime.ci <- matrix(0, ncol=2, nrow=61)
-phiList <- numeric(genome$getGenomeSize())
-ids <- numeric(genome$getGenomeSize())
+phiList <- numeric(genome$getGenomeSize(F))
+ids <- numeric(genome$getGenomeSize(F))
 codonList <- codons()
 for (i in 1:61)
 {
@@ -131,17 +131,17 @@ for (i in 1:genome$getGenomeSize())
 
 
 #corrolation between RFPModel and Premal's data
-#X <- read.table("../data/rfp/codon.specific.translation.rates.table.csv", header = TRUE, sep =",")
-#X <- X[order(X[,1]) , ]
+X <- read.table("../data/rfp/codon.specific.translation.rates.table.csv", header = TRUE, sep =",")
+X <- X[order(X[,1]) , ]
 
-#XM <- matrix(c(X[,1], X[,2]), ncol = 2, byrow = FALSE)
-#Y <- data.frame(codonList[-c(62,63,64)], waitingTimes)
-#colnames(Y) <- c("Codon", "PausingTime")
-#Y <- Y[order(Y[,1]) , ]
+XM <- matrix(c(X[,1], X[,2]), ncol = 2, byrow = FALSE)
+Y <- data.frame(codonList[-c(62,63,64)], waitingTimes)
+colnames(Y) <- c("Codon", "PausingTime")
+Y <- Y[order(Y[,1]) , ]
 
-#plot(NULL, NULL, xlim=range(XM[,2], na.rm = T), ylim=range(Y[,2]), 
-#     main = "Correlation Between Premal and RFP Model Pausing Times", xlab = "True Values", ylab = "Run Values")
-#upper.panel.plot(XM[,2], Y[,2])
+plot(NULL, NULL, xlim=range(XM[,2], na.rm = T), ylim=range(Y[,2]), 
+     main = "Correlation Between Premal and RFP Model Pausing Times", xlab = "True Values", ylab = "Run Values")
+upper.panel.plot(XM[,2], Y[,2])
 dev.off()
 
 

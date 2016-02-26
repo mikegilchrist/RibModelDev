@@ -23,7 +23,7 @@ parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssig
 
 
 # initialize MCMC object
-samples <- 10
+samples <- 100
 thining <- 10
 adaptiveWidth <- 10
 mcmc <- initializeMCMCObject(samples=samples, thining=thining, adaptive.width=adaptiveWidth, 
@@ -39,14 +39,14 @@ system.time(
   runMCMC(mcmc, genome, model, 8)
 )
 
-
+-2613341 - -2373588
 #plots log likelihood trace, possibly other mcmc diagnostics in the future
 
 
 # plots different aspects of trace
 trace <- parameter$getTraceObject()
-writeParameterObject(parameter, file="ROCParameter2.Rdat")
-writeMCMCObject(mcmc, file="MCMCObject1.Rdat")
+writeParameterObject(parameter, file="ROCParameter.Rdat")
+writeMCMCObject(mcmc, file="MCMCObject.Rdat")
 pdf("simulated_Genome_allUnique_startCSP_True_startPhi_true_adaptSphi_True.pdf")
 plot(mcmc)
 plot(trace, what = "MixtureProbability")
