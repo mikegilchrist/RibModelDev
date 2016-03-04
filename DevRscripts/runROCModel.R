@@ -23,7 +23,7 @@ parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssig
 
 
 # initialize MCMC object
-samples <- 100
+samples <- 10
 thining <- 10
 adaptiveWidth <- 10
 mcmc <- initializeMCMCObject(samples=samples, thining=thining, adaptive.width=adaptiveWidth, 
@@ -39,7 +39,7 @@ system.time(
   runMCMC(mcmc, genome, model, 8)
 )
 
--2613341 - -2373588
+
 #plots log likelihood trace, possibly other mcmc diagnostics in the future
 
 

@@ -2,7 +2,7 @@ rm(list=ls())
 library(ribModel)
 
 parameter <- loadParameterObject(c("ROCParameter.Rdat"))
-mcmc <- loadMCMCObject(c("MCMCObject1.Rdat", "MCMCObject2.Rdat"))
+mcmc <- loadMCMCObject(c("MCMCObject.Rdat"))
 genome <- initializeGenomeObject(file = "../data/realGenomes/Skluyveri.fasta")
 model <- initializeModelObject(parameter, "ROC", with.phi=FALSE)
 numMixtures <- length(trace$getSynthesisRateTrace())

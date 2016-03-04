@@ -2,8 +2,8 @@ rm(list=ls())
 library(ribModel)
 
 
-parameter <- loadParameterObject(c("RFPObject1.Rdat", "RFPObject2.Rdat"))
-mcmc <- loadMCMCObject(c("MCMCObject1.Rdat", "MCMCObject2.Rdat"))
+parameter <- loadParameterObject(c("RFPObject1.Rdat"))
+mcmc <- loadMCMCObject(c("MCMCObject1.Rdat"))
 genome <- initializeGenomeObject(file = "../data/rfp/rfp.counts.by.codon.and.gene.GSE63789.wt.csv", FALSE)
 
 
@@ -22,6 +22,7 @@ start <- length(loglik.trace) * 0.5 #the multiplier determines how much of the b
 #eliminated.
 
 logL <- logL <- mean(loglik.trace[start:length(loglik.trace)]) #get the mean for the subset
+#axis(1,at=start:length(loglik.trace), labels=start:length(loglik.trace))
 plot(loglik.trace[start:length(loglik.trace)], type="l", main=paste("logL:", logL), xlab="Sample", ylab="log(Likelihood)")
 grid (NULL,NULL, lty = 6, col = "cornsilk2")
 
@@ -55,23 +56,53 @@ proposal <- FALSE
 alphaList <- numeric (61)
 lambdaPrimeList <- numeric (61)
 waitingTimes <- numeric(61)
-phiList <- numeric(genome$getGenomeSize())
-ids <- numeric(genome$getGenomeSize())
+alpha.ci <- matrix(0, ncol=2, nrow=61)
+lambdaPrime.ci <- matrix(0, ncol=2, nrow=61)
+phiList <- numeric(genome$getGenomeSize(F))
+ids <- numeric(genome$getGenomeSize(F))
 codonList <- codons()
-i <- 1
 for (i in 1:61)
 {
   codon <- codonList[i]
   alphaList[i] <- parameter$getCodonSpecificPosteriorMean(cat, samples * 0.5, codon, 0)
+  alphaTrace <- trace$getCodonSpecificParameterTraceByMixtureElementForCodon(1, codon, 0)
+  alpha.ci[i,] <- quantile(alphaTrace[(samples * 0.5):samples], probs = c(0.025,0.975))
+  
+  
   lambdaPrimeList[i] <- parameter$getCodonSpecificPosteriorMean(cat, samples * 0.5, codon, 1)
-  waitingTimes[i] <- alphaList[i] * lambdaPrimeList[i]
+  lambdaPrimeTrace <- trace$getCodonSpecificParameterTraceByMixtureElementForCodon(1, codon, 1)
+  lambdaPrime.ci[i,] <- quantile(lambdaPrimeTrace[(samples * 0.5):samples], probs = c(0.025,0.975))
+  waitingTimes[i] <- alphaList[i] / lambdaPrimeList[i]
 }
+plot(NULL, NULL, xlim=range(1:61, na.rm = T), ylim=range(alpha.ci), 
+     main = "Confidence Intervals for Alpha Parameter", xlab = "Codons", 
+     ylab = "Estimated values", axes=F) 
+confidenceInterval.plot(x = 1:61, y = alphaList, sd.y = alpha.ci)
+axis(2)
+axis(1, tck = 0.02, labels = codonList[1:61], at=1:61, las=2, cex.axis=.6)
 
-for (geneIndex in 1:genome$getGenomeSize()) {
+plot(NULL, NULL, xlim=range(1:61, na.rm = T), ylim=range(lambdaPrime.ci), 
+     main = "Confidence Intervals for LambdaPrime Parameter", xlab = "Codons", 
+     ylab = "Estimated values", axes=F) 
+confidenceInterval.plot(x = 1:61, y = lambdaPrimeList, sd.y = lambdaPrime.ci)
+axis(2)
+axis(1, tck = 0.02, labels = codonList[1:61], at=1:61, las=2, cex.axis=.6)
+
+
+##############TEST##############
+newWaitTimes <- numeric(61)
+for (i in 1:61) {
+  newWaitTimes[i] <- (1.0/waitingTimes[i])
+}
+################################
+
+
+
+for (geneIndex in 1:genome$getGenomeSize(F)) {
   phiList[geneIndex] <- parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples * 0.5, geneIndex, 1)
 }
 
-for (i in 1:genome$getGenomeSize())
+for (i in 1:genome$getGenomeSize(F))
 {
   g <- genome$getGeneByIndex(i, FALSE)
   ids[i] <- g$id
@@ -80,10 +111,17 @@ for (i in 1:genome$getGenomeSize())
 
 
 
+#corrolation between RFPModel and Premal's data
+X <- read.table("../data/rfp/codon.specific.translation.rates.table.csv", header = TRUE, sep =",")
+X <- X[order(X[,1]) , ]
 
+XM <- matrix(c(X[,1], X[,2]), ncol = 2, byrow = FALSE)
+Y <- data.frame(codonList[-c(62,63,64)], newWaitTimes)
+colnames(Y) <- c("Codon", "PausingTime")
+Y <- Y[order(Y[,1]) , ]
 
-plot(NULL, NULL, xlim=range(alphaList, na.rm = T), ylim=range(lambdaPrimeList), 
-     main = "Correlation Between Alpha and Lambda Prime", xlab = "alpha", ylab = "lambdaPrime")
-upper.panel.plot(alphaList, lambdaPrimeList)
-
+plot(NULL, NULL, xlim=range(XM[,2], na.rm = T), ylim=range(Y[,2]), 
+     main = "Correlation Between Premal and RFP Model Pausing Times", xlab = "True Values", ylab = "Run Values")
+upper.panel.plot(XM[,2], Y[,2])
 dev.off()
+

@@ -12,7 +12,7 @@ geneAssignment <- c(rep(1, genome$getGenomeSize(F)))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model= "RFP", split.serine = TRUE, mixture.definition = mixDef)
 #parameter <- initializeParameterObject(model="RFP", restart.file="30restartFile.rst")
 
-samples <- 40
+samples <- 10
 thining <- 10
 adaptiveWidth <- 10
 mcmc <- initializeMCMCObject(samples=samples, thining=thining, adaptive.width=adaptiveWidth, 
@@ -117,7 +117,7 @@ confidenceInterval.plot(x = 1:61, y = lambdaPrimeList, sd.y = lambdaPrime.ci)
 axis(2)
 axis(1, tck = 0.02, labels = codonList[1:61], at=1:61, las=2, cex.axis=.6)
 
-for (geneIndex in 1:genome$getGenomeSize()) {
+for (geneIndex in 1:genome$getGenomeSize(F)) {
   phiList[geneIndex] <- parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples * 0.5, geneIndex, 1)
 }
 
