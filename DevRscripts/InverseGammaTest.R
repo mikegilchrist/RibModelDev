@@ -16,7 +16,8 @@ mixDef <- "allUnique"
 geneAssignment <- c(rep(1, genome$getGenomeSize(FALSE)))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, split.serine = TRUE, mixture.definition = mixDef)
 #parameter <- initializeParameterObject(model="ROC", restart.file="10restartFile.rst")
-
+phivals <- parameter$readPhiValues( "../data/singleMixture/simulatedOneMix_simphi.csv")
+parameter$initializeSynthesisRateByList(phivals)
 
 # initialize MCMC object
 samples <- 10000
