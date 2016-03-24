@@ -94,7 +94,7 @@ lambdaPrimeList <- numeric (61)
 waitingTimes <- numeric(61)
 alpha.ci <- matrix(0, ncol=2, nrow=61)
 lambdaPrime.ci <- matrix(0, ncol=2, nrow=61)
-phiList <- numeric(genome$getGenomeSize(F))
+psiList <- numeric(genome$getGenomeSize(F))
 ids <- numeric(genome$getGenomeSize(F))
 codonList <- codons()
 for (i in 1:61)
@@ -125,7 +125,7 @@ axis(2)
 axis(1, tck = 0.02, labels = codonList[1:61], at=1:61, las=2, cex.axis=.6)
 
 for (geneIndex in 1:genome$getGenomeSize(F)) {
-  phiList[geneIndex] <- parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples * 0.5, geneIndex, 1)
+  psiList[geneIndex] <- parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples * 0.5, geneIndex, 1)
 }
 
 for (i in 1:genome$getGenomeSize(F))
@@ -152,13 +152,15 @@ upper.panel.plot(XM[,2], Y[,2])
 dev.off()
 
 
-
+#Check true values vs run values
+pdf("Correlation_Between_True_Values_And_Run_Values.pdf")
 trueAlphaValues <- read.csv("../data/rfp/RFPAlphaValues.csv")
 trueLambdaPrimeValues <- read.csv("../data/rfp/RFPLambdaPrimeValues.csv")
-truePhiValues <- read.csv( "../data/rfp/RFPPhiValues.csv")
+truePsiValues <- read.csv( "../data/rfp/RFPPhiValues.csv")
 
 trueAlphaValues <- trueAlphaValues[order(trueAlphaValues[,1]) , ]
 trueLambdaPrimeValues <- trueLambdaPrimeValues[order(trueLambdaPrimeValues[,1]) , ]
+truePsiValues <- truePsiValues[order(truePsiValues[,1]) , ]
 
 
 lambdaPrimeDF <- data.frame(codonList[-c(62,63,64)], lambdaPrimeList)
@@ -167,4 +169,20 @@ lambdaPrimeDF <- lambdaPrimeDF[order(lambdaPrimeDF[,1]) , ]
 plot(trueLambdaPrimeValues[,2], lambdaPrimeDF[,2], xlim=range(trueLambdaPrimeValues[,2]),
      ylim=range(lambdaPrimeDF[,2]))
 upper.panel.plot(trueLambdaPrimeValues[,2], lambdaPrimeDF[,2])
+
+alphaDF <- data.frame(codonList[-c(62,63,64)], alphaList)
+colnames(alphaDF) <- c("Codon", "alphaValue")
+alphaDF <- alphaDF[order(alphaDF[,1]) , ]
+plot(trueAlphaValues[,2], alphaDF[,2], xlim=range(trueAlphaValues[,2]),
+     ylim=range(alphaDF[,2]))
+upper.panel.plot(trueAlphaValues[,2], alphaDF[,2])
+
+
+psiDF <- data.frame(codonList[-c(62,63,64)], psiList)
+colnames(psiDF) <- c("Codon", "psiValue")
+psiDF <- psiDF[order(psiDF[,1]) , ]
+plot(truePsiValues[,2], psiDF[,2], xlim=range(truePsiValues[,2]),
+     ylim=range(psiDF[,2]))
+upper.panel.plot(truePsiValues[,2], psiDF[,2])
+dev.off()
 
