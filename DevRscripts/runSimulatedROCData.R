@@ -1,7 +1,7 @@
 library(ribModel)
 rm(list=ls())
 #read genome
-genome <- initializeGenomeObject(file = "../ribModel/data/simulatedAllUniqueR.fasta")
+genome <- initializeGenomeObject(file = "../data/twoMixtures/simulatedAllUniqueR.fasta")
 
 #initialize parameter object
 sphi_init <- 2
@@ -12,10 +12,10 @@ parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssig
 
 
 #init from true values
-phiVals <- parameter$readPhiValues( "../ribModel/data/simulatedSelectionSharedR_phi.csv" )
+phiVals <- parameter$readPhiValues( "../data/twoMixtures/simulatedSelectionSharedR_phi.csv" )
 parameter$initializeSynthesisRateByRandom(phiVals)
-parameter$initMutationCategories(c("../ribModel/data/simulated_mutation0.csv", "../ribModel/data/simulated_mutation1.csv"), 2)
-parameter$initSelectionCategories(c("../ribModel/data/simulated_selection0.csv", "../ribModel/data/simulated_selection1.csv") , 2)
+parameter$initMutationCategories(c("../data/twoMixtures/simulated_mutation0.csv", "../data/twoMixtures/simulated_mutation1.csv"), 2)
+parameter$initSelectionCategories(c("../data/twoMixtures/simulated_selection0.csv", "../data/twoMixtures/simulated_selection1.csv") , 2)
 
 
 # initialize MCMC object
