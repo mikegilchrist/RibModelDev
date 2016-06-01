@@ -5,7 +5,7 @@
 #ORF	RFPCount	CodonCount	Codon
 
 
-table <- read.table("../ribModel/data/GSM1406455_untreated_3.percodon.txt", header=TRUE, sep="\t")
+table <- read.table("../data/rfp/GSM1406455_untreated_3.percodon.txt", header=TRUE, sep="\t")
 gene.names <- as.character(unique(table[,1])) #Pull all unique gene names from the file
 
 
