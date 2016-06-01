@@ -1,12 +1,11 @@
-library(ribModel)
 rm(list=ls())
+library(ribModel)
 #read genome
 
-genome.file <- "../data/FONSE/genome_2000.fasta"
-phi.file <- "../data/realGenomes/Scereviciae.phi.csv"
-mut.file <- "../data/realGenomes/Scereviciae.mut.csv"
-sel.file <- "../data/realGenomes/Scereviciae.sel.csv"
-
+genome.file <- "../data/FONSE/fonse2.fasta"
+phi.file <- "../data/FONSE/genome_2000.phi.csv"
+mut.file <- "../data/FONSE/S.cer.mut.csv"
+sel.file <- "../data/FONSE/selection2ref.csv"
 
 from.good.values <- FALSE
 genome <- initializeGenomeObject(genome.file)
@@ -41,7 +40,7 @@ if(from.good.values) {
 setRestartSettings(mcmc, "restartFile.rst", 10, TRUE)
 #run mcmc on genome with parameter using model
 system.time(
-  runMCMC(mcmc, genome, model, 16)
+  runMCMC(mcmc, genome, model, 4)
 )
 
 writeParameterObject(parameter, file="FONSEObject1.Rdat")
