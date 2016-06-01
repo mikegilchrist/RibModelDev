@@ -19,11 +19,11 @@ geneAssignment <- c(rep(1,448), rep(1,513), rep(2,457), rep(1, 3403), rep(3, 500
 #geneAssignment <- c(rep(1,448), rep(2,457))
 #geneAssignment <- c(rep(1,500), rep(2,500))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, split.serine = TRUE, mixture.definition = mixDef)
-#parameter <- initializeParameterObject(model="ROC", restart.file="50restartFile.rst")
+parameter <- initializeParameterObject(model="ROC", restart.file="10restartFile.rst")
 
 
 # initialize MCMC object
-samples <- 30
+samples <- 10
 thining <- 10
 adaptiveWidth <- 10
 mcmc <- initializeMCMCObject(samples=samples, thining=thining, adaptive.width=adaptiveWidth, 
@@ -45,8 +45,8 @@ system.time(
 
 # plots different aspects of trace
 trace <- parameter$getTraceObject()
-writeParameterObject(parameter, file="ROCParameter1.Rdat")
-writeMCMCObject(mcmc, file="MCMCObject1.Rdat")
+writeParameterObject(parameter, file="ROCParameter.Rdat")
+writeMCMCObject(mcmc, file="MCMCObject.Rdat")
 pdf("simulated_Genome_allUnique_startCSP_True_startPhi_true_adaptSphi_True.pdf")
 plot(mcmc)
 plot(trace, what = "MixtureProbability")
@@ -63,7 +63,7 @@ expressionValues <- unlist(lapply(1:genome$getGenomeSize(), function(geneIndex){
   parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples, geneIndex, expressionCategory)
 }))
 expressionValues <- log10(expressionValues)
-obs.phi <- log10(read.table("../data//twoMixtures/simulatedAllUniqueR_phi.csv", sep=",", header=T)[, 2])
+obs.phi <- log10(read.table("../data/twoMixtures/simulatedAllUniqueR_phi.csv", sep=",", header=T)[, 2])
 plot(NULL, NULL, xlim=range(expressionValues, na.rm = T) + c(-0.1, 0.1), ylim=range(obs.phi) + c(-0.1, 0.1), 
      main = "Synthesis Rate", xlab = "true values", ylab = "estimated values")
 upper.panel.plot(obs.phi[mixtureAssignment == 1], expressionValues[mixtureAssignment == 1], col="black")
