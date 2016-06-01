@@ -4,6 +4,7 @@
 *.Rda
 *.Rdat
 *.Rout
+*.Rhistory
 
 # Compiled Object files
 *.slo
@@ -33,3 +34,5 @@
 *.exe
 *.out
 *.app
+*.Rhistory
+DevRscripts/.Rhistory

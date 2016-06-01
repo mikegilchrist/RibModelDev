@@ -8,9 +8,9 @@ genome <- initializeGenomeObject(file =
 sphi_init <- c(2)
 numMixtures <- 1
 mixDef <- "allUnique"
-geneAssignment <- c(rep(1, genome$getGenomeSize(F)))
+geneAssignment <- c(rep(1, genome$getGenomeSize()))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model= "RFP", split.serine = TRUE, mixture.definition = mixDef)
-#parameter <- initializeParameterObject(model="RFP", restart.file="10_restartFile.rst")
+#parameter <- initializeParameterObject(model="RFP", restart.file="30restartFile.rst")
 
 samples <- 10
 thining <- 10
