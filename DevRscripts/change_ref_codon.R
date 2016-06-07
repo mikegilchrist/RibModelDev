@@ -1,6 +1,6 @@
 
-mut <- read.table(file="../ribModel/data/genome_2000.mutation.tsv", header=T, sep="\t")
-sel <- read.table(file="../ribModel/data/genome_2000.selection.tsv", header=T, sep="\t")
+mut <- read.table(file="../data/singleMixture/genome_2000.mutation.tsv", header=T, sep="\t")
+sel <- read.table(file="../data/singleMixture/genome_2000.selection.tsv", header=T, sep="\t")
 
 for(aa in as.character(unique(mut[, 1])))
 {
@@ -15,5 +15,5 @@ for(aa in as.character(unique(mut[, 1])))
 mut <- mut[mut[, 3] != 0, ]
 sel <- sel[sel[, 3] != 0, ]
 
-write.table(file = "../ribModel/data/genome_2000.mutation.csv", quote = F, sep = ",", x = mut)
-write.table(file = "../ribModel/data/genome_2000.selection.csv", quote = F, sep = ",", x = sel)
+write.table(file = "../data/singleMixture/genome_2000.mutation.csv", quote = F, sep = ",", x = mut)
+write.table(file = "../data/singleMixture/genome_2000.selection.csv", quote = F, sep = ",", x = sel)

@@ -1,8 +1,8 @@
 library(ribModel)
 rm(list=ls())
 #read genome
-#genome <- initializeGenomeObject(file = "../ribModel/data/simulatedAllUniqueR.fasta")
-genome <- initializeGenomeObject(file = "../ribModel/data/realGenomes/s288c.genome.fasta")
+#genome <- initializeGenomeObject(file = "../data/twoMixtures/simulatedAllUniqueR.fasta")
+genome <- initializeGenomeObject(file = "../data/realGenomes/s288c.genome.fasta")
 
 #initialize parameter object
 sphi_init <- 2
@@ -49,7 +49,7 @@ expressionValues <- unlist(lapply(1:genome$getGenomeSize(), function(geneIndex){
   parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples, geneIndex, expressionCategory)
 }))
 expressionValues <- log10(expressionValues)
-obs.phi <- log10(read.table("../ribModel/data/simulatedAllUniqueR_phi.csv", sep=",", header=T)[, 2])
+obs.phi <- log10(read.table("../data/twoMixtures/simulatedAllUniqueR_phi.csv", sep=",", header=T)[, 2])
 plot(NULL, NULL, xlim=range(expressionValues, na.rm = T) + c(-0.1, 0.1), ylim=range(obs.phi) + c(-0.1, 0.1), 
      main = "Synthesis Rate", xlab = "true values", ylab = "estimated values")
 upper.panel.plot(obs.phi[mixtureAssignment == 1], expressionValues[mixtureAssignment == 1], col="black")
@@ -77,7 +77,7 @@ plot(model, genome, parameter, samples = samples*0.1, mixture = mixture, main = 
 names.aa <- aminoAcids()
 selection <- c()
 mutation <- c()
-csp <- read.table("../ribModel/data/simulated_CSP0.csv", sep=",", header=T)
+csp <- read.table("../data/twoMixtures/simulated_CSP0.csv", sep=",", header=T)
 idx.eta <- grepl(pattern = "[A-Z].[A-Z]{3}.Delta.eta", x = as.character(csp[,1]))
 idx.mu <- grepl(pattern = "[A-Z].[A-Z]{3}.log.mu", x = as.character(csp[,1]))
 for(aa in names.aa)
@@ -112,7 +112,7 @@ plot(model, genome, parameter, samples = samples*0.1, mixture = mixture, main = 
 names.aa <- aminoAcids()
 selection <- c()
 mutation <- c()
-csp <- read.table("../ribModel/data/simulated_CSP1.csv", sep=",", header=T)
+csp <- read.table("../data/twoMixtures/simulated_CSP1.csv", sep=",", header=T)
 idx.eta <- grepl(pattern = "[A-Z].[A-Z]{3}.Delta.eta", x = as.character(csp[,1]))
 idx.mu <- grepl(pattern = "[A-Z].[A-Z]{3}.log.mu", x = as.character(csp[,1]))
 for(aa in names.aa)
