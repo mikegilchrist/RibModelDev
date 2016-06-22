@@ -2,6 +2,7 @@ rm(list=ls())
 library(ribModel)
 #read genome
 
+#Initializes the files used for the following parameters
 genome.file <- "../data/FONSE/fonse2.fasta"
 phi.file <- "../data/FONSE/genome_2000.phi.csv"
 mut.file <- "../data/FONSE/S.cer.mut.csv"
@@ -10,6 +11,8 @@ sel.file <- "../data/FONSE/selection2ref.csv"
 from.good.values <- FALSE
 genome <- initializeGenomeObject(genome.file)
 
+#initialize sphi and the number of mixtures, but with FONSE, the 
+#number of mixtures is always 1. Then initialize the parameter
 sphi_init <- 1
 numMixtures <- 1
 mixDef <- "allUnique"
@@ -21,15 +24,17 @@ geneAssignment <- rep(1,length(genome))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model="FONSE", split.serine = TRUE,
                                        mixture.definition = mixDef)
 #parameter <- initializeParameterObject(model="FONSE", restart.file="10restartFile.rst")
-# initialize MCMC object
-samples <- 10
-thining <- 10
+
+# initialize MCMC object. The MCMC loop will go for samples * thinning iterations.
+samples <- 1000
+thining <- 100
 adaptiveWidth <- 10
 mcmc <- initializeMCMCObject(samples=samples, thining=thining, adaptive.width=adaptiveWidth,
                              est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE)
 # get model object
 model <- initializeModelObject(parameter, "FONSE")
 
+#TODO: Ask Jeremy about the purpose of this boolean check.
 if(from.good.values) {
   phi <- read.table(phi.file, header = T, sep = ",")
   phi.values <- phi[,2]
@@ -37,12 +42,15 @@ if(from.good.values) {
   parameter$initializeSynthesisRateByList(phi.values)
 }
 
+#Set the settings for the restart file, i.e. the names of them and how often to write them.
 setRestartSettings(mcmc, "restartFile.rst", 10, TRUE)
+
 #run mcmc on genome with parameter using model
 system.time(
   runMCMC(mcmc, genome, model, 4)
 )
 
+#Write the .Rdat files for both the parameter object and the MCMC object.
 writeParameterObject(parameter, file="FONSEObject1.Rdat")
 writeMCMCObject(mcmc, file="MCMCObject1.Rdat")
 #plots log likelihood trace, possibly other mcmc diagnostics in the future
@@ -51,7 +59,8 @@ plot(mcmc)
 loglik.trace <- mcmc$getLogLikelihoodTrace()
 acf(loglik.trace)
 
-# plots different aspects of trace
+# plots different aspects of trace. Mixture probability can be ignored since the mixture is always one.
+# Also need to ask Jeremy why SPhi doesn't plot anything.
 trace <- parameter$getTraceObject()
 plot(trace, what = "MixtureProbability")
 plot(trace, what = "SPhi")
@@ -80,6 +89,8 @@ dev.off()
 
 #plot(trace, what = "Expression", geneIndex = 999, mixture = 2)
 
+#Plots the final aspects of the traces, that is, the mutation and selection traces
+#for each amino acid and its set of synonymous codons.
 pdf("Fonse3CSP.pdf", width = 11, height = 12)
 mixture <- 1
 plot(trace, what = "Mutation", mixture = mixture)
@@ -88,6 +99,8 @@ plot(trace, what = "Selection", mixture = mixture)
 # plots model fit (cub plot)
 #plot(model, genome, parameter, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
 
+#TODO: Ask Jeremy about the rest of this code since it doesn't seem to do much in RStudio.
+#However, the rest of the code before this is enough to judge how well the algorithm works.
 names.aa <- aminoAcids()
 selection <- c()
 mutation <- c()
