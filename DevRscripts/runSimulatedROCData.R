@@ -61,7 +61,7 @@ plot(parameter, what = "Selection", main = "Selecion Correlation, Not shared")
 ##-----------------------------------------##
 
 #creates a plot Mixture Prob vs log10(phi) (Not part of the package)
-num.genes <- genome$getGenomeSize()
+num.genes <- length(genome)
 mixtureAssignment <- do.call("rbind", lapply(1:num.genes,  function(geneIndex){parameter$getEstimatedMixtureAssignmentProbabilitiesForGene(samples*0.1, geneIndex)}))
 plot(NULL, NULL, xlim = c(0,1), ylim = c(-2, 1), xlab = "Probability beeing in Mixture 2", ylab = "log10(phi)")
 colors <- c("black", "red")

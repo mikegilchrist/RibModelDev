@@ -8,7 +8,7 @@ genome <- initializeGenomeObject(file =
 sphi_init <- c(2)
 numMixtures <- 1
 mixDef <- "allUnique"
-geneAssignment <- c(rep(1, genome$getGenomeSize()))
+geneAssignment <- c(rep(1, length(genome)) 
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model= "RFP", split.serine = TRUE, mixture.definition = mixDef)
 #parameter <- initializeParameterObject(model="RFP", restart.file="30restartFile.rst")
 
@@ -81,8 +81,8 @@ lambdaPrimeList <- numeric (61)
 waitingTimes <- numeric(61)
 alpha.ci <- matrix(0, ncol=2, nrow=61)
 lambdaPrime.ci <- matrix(0, ncol=2, nrow=61)
-psiList <- numeric(genome$getGenomeSize(F))
-ids <- numeric(genome$getGenomeSize(F))
+psiList <- numeric(length(genome))
+ids <- numeric(length(genome))
 codonList <- codons()
 for (i in 1:61)
 {
@@ -99,16 +99,18 @@ for (i in 1:61)
 }
 
 waitRates <- numeric(61)
-for (i in 1:61) {
+for (i in 1:61)
+{
   waitRates[i] <- (1.0/waitingTimes[i])
 }
 
 
-for (geneIndex in 1:genome$getGenomeSize(FALSE)) {
+for (geneIndex in 1:length(genome))
+{
   psiList[geneIndex] <- parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples * 0.5, geneIndex, 1)
 }
 
-for (i in 1:genome$getGenomeSize(FALSE))
+for (i in 1:length(genome))
 {
   g <- genome$getGeneByIndex(i, FALSE)
   ids[i] <- g$id

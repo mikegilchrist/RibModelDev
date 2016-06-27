@@ -11,7 +11,7 @@ genome <- initializeGenomeObject(file = "../data/rfp/simulatedRFPData1.csv", FAL
 sphi_init <- c(2)
 numMixtures <- 1
 mixDef <- "allUnique"
-geneAssignment <- c(rep(1, genome$getGenomeSize(F)))
+geneAssignment <- c(rep(1, length(genome)))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model= "RFP", split.serine = TRUE, mixture.definition = mixDef)
 #parameter <- new(RFPParameter, "10000restartFile.rst")
 parameter <- initializeParameterObject(model = 'RFP', restart.file = "10000restartFile.rst")
@@ -94,8 +94,8 @@ lambdaPrimeList <- numeric (61)
 waitingTimes <- numeric(61)
 alpha.ci <- matrix(0, ncol=2, nrow=61)
 lambdaPrime.ci <- matrix(0, ncol=2, nrow=61)
-psiList <- numeric(genome$getGenomeSize(F))
-ids <- numeric(genome$getGenomeSize(F))
+psiList <- numeric(length(genome))
+ids <- numeric(length(genome))
 codonList <- codons()
 for (i in 1:61)
 {
@@ -124,11 +124,12 @@ confidenceInterval.plot(x = 1:61, y = lambdaPrimeList, sd.y = lambdaPrime.ci)
 axis(2)
 axis(1, tck = 0.02, labels = codonList[1:61], at=1:61, las=2, cex.axis=.6)
 
-for (geneIndex in 1:genome$getGenomeSize(F)) {
+for (geneIndex in 1:length(genome))
+{
   psiList[geneIndex] <- parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples * 0.5, geneIndex, 1)
 }
 
-for (i in 1:genome$getGenomeSize(F))
+for (i in 1:length(genome))
 {
   g <- genome$getGeneByIndex(i, FALSE)
   ids[i] <- g$id

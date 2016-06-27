@@ -21,11 +21,8 @@ plot(trace, what = "Expression", geneIndex = 905)
 pdf("test2.pdf", width = 11, height = 12)
 plot(trace, what = "Mutation", mixture = 1)
 plot(trace, what = "Selection", mixture = 1)
-mixtureAssignment <- unlist(lapply(1:genome$getGenomeSize(),  function(geneIndex){parameter$getEstimatedMixtureAssignmentForGene(samples, geneIndex)}))
-expressionValues <- unlist(lapply(1:genome$getGenomeSize(), function(geneIndex){
-  expressionCategory <- parameter$getSynthesisRateCategoryForMixture(mixtureAssignment[geneIndex])
-  parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples, geneIndex, expressionCategory)
-}))
+mixtureAssignment <- getMixtureAssignmentEstimate(parameter, length(genome), samples)
+expressionValues <- getExpressionEstimatesForMixture(parameter, length(genome), mixtureAssignment, samples)
 expressionValues <- log10(expressionValues)
 obs.phi <- log10(read.table("../data/twoMixtures/simulatedAllUniqueR_phi.csv", sep=",", header=T)[, 2])
 plot(NULL, NULL, xlim=range(expressionValues, na.rm = T) + c(-0.1, 0.1), ylim=range(obs.phi) + c(-0.1, 0.1), 
@@ -44,7 +41,7 @@ plot(parameter, what = "Selection", main = "Selecion Correlation, Not shared")
 ##-----------------------------------------##
 
 #creates a plot Mixture Prob vs log10(phi) (Not part of the package)
-num.genes <- genome$getGenomeSize()
+num.genes <- length(genome)
 mixtureAssignment <- do.call("rbind", lapply(1:num.genes,  function(geneIndex){parameter$getEstimatedMixtureAssignmentProbabilitiesForGene(samples*0.1, geneIndex)}))
 plot(NULL, NULL, xlim = c(0,1), ylim = c(-2, 1), xlab = "Probability beeing in Mixture 2", ylab = "log10(phi)")
 colors <- c("black", "red")

@@ -1,10 +1,9 @@
 rm(list=ls())
 library(ribModel)
 seeds <- read.table(file = "seed.txt")[,1]
-task.id <- as.numeric(Sys.getenv("SGE_TASK_ID"))
-
-set.seed(seeds[task.id])
-#set.seed(446141)
+task.id <- 1 #as.numeric(Sys.getenv("SGE_TASK_ID"))
+#set.seed(seeds[task.id])
+set.seed(446141)
 with.phi <- FALSE
 
 if (with.phi) {

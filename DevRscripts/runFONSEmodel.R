@@ -57,11 +57,8 @@ plot(trace, what = "MixtureProbability")
 plot(trace, what = "SPhi")
 plot(trace, what = "ExpectedPhi")
 
-mixtureAssignment <- unlist(lapply(1:genome$getGenomeSize(),  function(geneIndex){parameter$getEstimatedMixtureAssignmentForGene(samples, geneIndex)}))
-expressionValues <- unlist(lapply(1:genome$getGenomeSize(), function(geneIndex){
-  expressionCategory <- parameter$getSynthesisRateCategoryForMixture(mixtureAssignment[geneIndex])
-  parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples, geneIndex, expressionCategory)
-}))
+mixtureAssignment <- getMixtureAssignmentEstimate(parameter, length(genome), samples)
+expressionValues <- getExpressionEstimatesForMixture(parameter, length(genome), mixtureAssignment, samples)
 expressionValues <- log10(expressionValues)
 obs.phi <- log10(read.table(phi.file, sep=",", header=T)[, 2])
 cat(length(expressionValues), "\n")
