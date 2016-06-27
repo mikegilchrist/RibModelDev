@@ -13,7 +13,7 @@ if (with.phi) {
 sphi_init <- (c(1))
 numMixtures <- 1
 mixDef <- "allUnique"
-geneAssignment <- c(rep(1, length(genome))
+geneAssignment <- c(rep(1, length(genome)))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, split.serine = TRUE, mixture.definition = mixDef)
 #parameter <- initializeParameterObject(model="ROC", restart.file="10restartFile.rst")
 phivals <- parameter$readPhiValues( "../data/singleMixture/simulatedOneMix_simphi.csv")
