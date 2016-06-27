@@ -55,8 +55,8 @@ lambdaPrimeList <- numeric (61)
 waitingTimes <- numeric(61)
 alpha.ci <- matrix(0, ncol=2, nrow=61)
 lambdaPrime.ci <- matrix(0, ncol=2, nrow=61)
-psiList <- numeric(genome$getGenomeSize(F))
-ids <- numeric(genome$getGenomeSize(F))
+psiList <- numeric(length(genome))
+ids <- numeric(length(genome))
 codonList <- codons()
 for (i in 1:61)
 {
@@ -78,11 +78,11 @@ for (i in 1:61) {
 }
 
 
-for (geneIndex in 1:genome$getGenomeSize(FALSE)) {
+for (geneIndex in 1:length(genome)) {
   psiList[geneIndex] <- parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples * 0.5, geneIndex, 1)
 }
 
-for (i in 1:genome$getGenomeSize(FALSE))
+for (i in 1:length(genome))
 {
   g <- genome$getGeneByIndex(i, FALSE)
   ids[i] <- g$id

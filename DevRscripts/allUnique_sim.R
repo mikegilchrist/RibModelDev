@@ -39,7 +39,8 @@ pdf(paste(task.id, "_simulated_global_allUnique.pdf", sep=""), width = 11, heigh
 plot(mcmc)
 loglik.trace <- mcmc$getLogLikelihoodTrace()[-1]
 acf(loglik.trace) 
-convergence.test(mcmc, n.samples = 500, plot=T) 
+# Currently has an error
+#convergence.test(mcmc, n.samples = 500, plot=T) 
 
 trace <- parameter$getTraceObject()
 plot(trace, what = "MixtureProbability")
@@ -51,11 +52,8 @@ if (with.phi) {
 } 
 plot(trace, what = "ExpectedPhi")
 
-mixtureAssignment <- unlist(lapply(1:length(genome),  function(geneIndex){parameter$getEstimatedMixtureAssignmentForGene(samples*0.1, geneIndex)})) 
-expressionValues <- unlist(lapply(1:length(genome), function(geneIndex){ 
-  expressionCategory <- parameter$getSynthesisRateCategoryForMixture(mixtureAssignment[geneIndex]) 
-  parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples*0.1, geneIndex, expressionCategory) 
-})) 
+mixtureAssignment <- getMixtureAssignmentEstimate(parameter, length(genome), samples*0.1)
+expressionValues <- getExpressionEstimatesForMixture(parameter, length(genome), mixtureAssignment, samples*0.1)
 expressionValues <- log10(expressionValues) 
 obs.phi <- log10(read.table("../data/twoMixtures/simulatedAllUniqueR_phi.csv", sep=",", header=T)[, 2]) 
 plot(NULL, NULL, xlim=range(obs.phi) + c(-0.1, 0.1), ylim=range(expressionValues, na.rm = T) + c(-0.1, 0.1), 
@@ -66,34 +64,6 @@ for(k in 1:numMixtures){
 } 
 legend("topleft", legend = paste("Mixture Element", 1:numMixtures), 
        col = ribModel:::.mixtureColors[1:numMixtures], lty = rep(1, numMixtures), bty = "n") 
-
-mixprob <- do.call("rbind", lapply(1:genome$getGenomeSize(), function(geneIndex){
-  props <- parameter$getEstimatedMixtureAssignmentProbabilitiesForGene(samples*0.1, geneIndex)
-  gene <- genome$getGeneByIndex(geneIndex, F)
-  c(gene$id, props)
-}))
-plot(NULL, NULL, xlim = c(1-0.2, numMixtures+0.2), ylim = c(0, 1), xlab="Mixture Assignment", ylab = "Probability")
-for(k in 1:numMixtures){
-  points(mixtureAssignment[mixtureAssignment == k] + runif(length(mixtureAssignment[mixtureAssignment == k]), -0.2, 0.2), 
-         as.numeric(mixprob[mixtureAssignment == k, k+1]), col = ribModel:::.mixtureColors[k])
-}
-legend("bottomleft", legend = paste("Mixture Element", 1:numMixtures),
-       col = ribModel:::.mixtureColors[1:numMixtures], pch = rep(1, numMixtures), bty = "n")
-
-write.table(file=paste(task.id, "_simulated_allUnique.csv", sep=""), x = mixprob, sep = ",", row.names = F, quote = F, col.names = F)
-
-gene.ids <- unlist(lapply(1:genome$getGenomeSize(), function(geneIndex){ 
-  gene <- genome$getGeneByIndex(geneIndex, F)
-  return(gene$id)
-})) 
-gene.obs.ids <- as.character(read.table("../data/twoMixtures/simulatedAllUniqueR_phi.csv", sep=",", header=T)[, 1])
-mixtureAssignment <- mixtureAssignment[gene.ids %in% gene.obs.ids]
-expressionValues <- expressionValues[gene.ids %in% gene.obs.ids]
-gene.ids <- gene.ids[gene.ids %in% gene.obs.ids]
-mat <- cbind(gene.ids, expressionValues, mixtureAssignment)
-
-
-write.table(file=paste(task.id, "_simulated_filtered_expression_allUnique.csv", sep=""), x = mat, sep=",", quote = F, row.names = F, col.names = F)
 
 plot(parameter, what = "Mutation", samples = samples*0.1)
 plot(parameter, what = "Selection", samples = samples*0.1) 

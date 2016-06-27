@@ -1,20 +1,5 @@
 Gene.cpp
 -------------------------------------------------------------------------------------
-*Problem with setSequence(), both on C and R side. While the issue should never 
-arise on the C side, it could on R. If a gene already has a sequence and a user tries
-to set a new sequence (ie, no clear call on the Gene, since we do not expose that in R),
-then we have an issue with the data stored in the SequenceSummary object. If you imagine
-the gene has a sequence X, and the user then calls setSequence(X) after that, the sequence
-will be correctly represented (regardless of if the X = previous X), but the data
-in geneData would be doubled. Should we be calling clear on the SequenceSummary object
-when we do this?
-
-
-*Problem with what the expected value of cleanSeq() should be on an invalid, or
-messy, sequence. Imagine AAATTTNGCYRNKROTTN and run through the code and see what
-you would expect the sequence variable to hold afterwards.
-
-
 *Decide if we want to move the two public variables to private for consistency.
 
 
@@ -33,7 +18,7 @@ parameterObject.R
 *Implement "loadFONSEParameter."
 
 *Change the implementation of the loadParameterObject functions to where multiple 
-objects can be read in and concatinated.
+objects can be read in and concatenated.
 
 *Should add more error checking be done in "initializeParameterObject." Currently some 
 checks are made, but should the error checking be fool proof to prevent R crashes.
@@ -45,14 +30,14 @@ checks are made, but should the error checking be fool proof to prevent R crashe
 
 mcmcObject.R
 ---------------------------------------------------------------------------------------
-*Should we provide a default arguemtn for number of samples?
+*Should we provide a default argument for number of samples?
 
 *Make sure the default values in R match the default values in C++. 
-Not a necessary check, but would be nice for consistancy.
+Not a necessary check, but would be nice for consistency.
 
 *We have est.expression as an argument to our initializeMCMCObject function, while
 everywhere, such as other function calls and print statements in the code, we 
-call this synthesisRate. Should be changed for consistancy?
+call this synthesisRate. Should be changed for consistency?
 
 *Details should be looked at to make sure information given is accurate. 
 
@@ -83,7 +68,7 @@ is overwritten by other non-similar models.
 
 *Test all modes (allUnique, selectionShared, mutationShared, custom).
 
-*Change trace to one object, get rid of heirarchy.
+*Change trace to one object, get rid of hierarchy.
 
 *Unit testing
 
@@ -94,8 +79,6 @@ is overwritten by other non-similar models.
 *acf graphs for hyper parameters
 
 *Fix restart files for FONSE model.
-
-*Test that (see Selac code) needs to get path for file names.
 
 
 
@@ -109,8 +92,6 @@ BUGS
 arrays.
 
 *R CMD check fails: namespace. 
-
-*Change output to have R output. Need some generic function to wrap R printing.
 
 *S epsilon doesn't converge to correct value.
 

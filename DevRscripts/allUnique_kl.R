@@ -1,7 +1,7 @@
 rm(list=ls())
 library(ribModel)
 #seeds <- read.table(file = "seed.txt")[,1]
-#task.id <- as.numeric(Sys.getenv("SGE_TASK_ID"))
+task.id <- 1 #as.numeric(Sys.getenv("SGE_TASK_ID"))
 
 #set.seed(seeds[task.id])
 set.seed(446141)
@@ -52,11 +52,8 @@ if (with.phi) {
 } 
 plot(trace, what = "ExpectedPhi")
 
-mixtureAssignment <- unlist(lapply(1:genome$getGenomeSize(),  function(geneIndex){parameter$getEstimatedMixtureAssignmentForGene(samples*0.1, geneIndex)})) 
-expressionValues <- unlist(lapply(1:genome$getGenomeSize(), function(geneIndex){ 
-  expressionCategory <- parameter$getSynthesisRateCategoryForMixture(mixtureAssignment[geneIndex]) 
-  parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples*0.1, geneIndex, expressionCategory) 
-})) 
+mixtureAssignment <- getMixtureAssignmentEstimate(parameter, length(genome), samples*0.1)
+expressionValues <- getExpressionEstimatesForMixture(parameter, length(genome), mixtureAssignment, samples*0.1)
 expressionValues <- log10(expressionValues) 
 obs.phi <- log10(read.table("../data/realGenomes/Skluyveri_phi.csv", sep=",", header=T)[, 2]) 
 plot(NULL, NULL, xlim=range(obs.phi) + c(-0.1, 0.1), ylim=range(expressionValues, na.rm = T) + c(-0.1, 0.1), 
@@ -68,7 +65,7 @@ for(k in 1:numMixtures){
 legend("topleft", legend = paste("Mixture Element", 1:numMixtures), 
        col = ribModel:::.mixtureColors[1:numMixtures], lty = rep(1, numMixtures), bty = "n") 
 
-mixprob <- do.call("rbind", lapply(1:genome$getGenomeSize(), function(geneIndex){
+mixprob <- do.call("rbind", lapply(1:length(genome), function(geneIndex){
   props <- parameter$getEstimatedMixtureAssignmentProbabilitiesForGene(samples*0.1, geneIndex)
   gene <- genome$getGeneByIndex(geneIndex, F)
   c(gene$id, props)
@@ -83,7 +80,7 @@ legend("bottomleft", legend = paste("Mixture Element", 1:numMixtures),
 
 write.table(file=paste(task.id, "_kluyveri_full_allUnique.csv", sep=""), x = mixprob, sep = ",", row.names = F, quote = F, col.names = F)
 
-gene.ids <- unlist(lapply(1:genome$getGenomeSize(), function(geneIndex){ 
+gene.ids <- unlist(lapply(1:length(genome), function(geneIndex){ 
   gene <- genome$getGeneByIndex(geneIndex, F)
   return(gene$id)
 })) 

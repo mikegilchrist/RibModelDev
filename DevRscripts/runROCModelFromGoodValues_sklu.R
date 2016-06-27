@@ -67,11 +67,8 @@ if (with.phi) {
 }
 plot(trace, what = "ExpectedPhi")
 
-mixtureAssignment <- unlist(lapply(1:genome$getGenomeSize(),  function(geneIndex){parameter$getEstimatedMixtureAssignmentForGene(samples, geneIndex)}))
-expressionValues <- unlist(lapply(1:genome$getGenomeSize(), function(geneIndex){
-  expressionCategory <- parameter$getSynthesisRateCategoryForMixture(mixtureAssignment[geneIndex])
-  parameter$getSynthesisRatePosteriorMeanByMixtureElementForGene(samples, geneIndex, expressionCategory)
-}))
+mixtureAssignment <- getMixtureAssignmentEstimate(parameter, length(genome), samples)
+expressionValues <- getExpressionEstimatesForMixture(parameter, length(genome), mixtureAssignment, samples)
 expressionValues <- log10(expressionValues)
 obs.phi <- log10(read.table("../data/realGenomes/realGenomes/Skluyveri_phi.csv", sep=",", header=T)[, 2])
 #obs.phi <- log10(read.table("../data/twoMixtures/simulatedAllUniqueR_phi.csv", sep=",", header=T)[, 2])
