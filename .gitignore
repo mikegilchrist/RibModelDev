@@ -34,5 +34,6 @@
 *.exe
 *.out
 *.app
-*.Rhistory
-DevRscripts/.Rhistory
+
+# Mac stuff
+*.DS_Store
