@@ -85,8 +85,8 @@ upper.panel.plot(obs.phi[mixtureAssignment == 2], expressionValues[mixtureAssign
 legend("topleft", legend = paste("Mixture Element", 1:numMixtures), 
        col = ribModel:::.mixtureColors[1:numMixtures], lty = rep(1, numMixtures), bty = "n")
 
-plot(parameter, what = "Mutation")
-plot(parameter, what = "Selection")
+plot(parameter, what = "Mutation", samples = samples*0.1)
+plot(parameter, what = "Selection", samples = samples*0.1)
 dev.off()
 
 
