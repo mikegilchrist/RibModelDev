@@ -80,10 +80,6 @@ for (k in 1:numMixtures) {
   plot(model, genome, parameter, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
   names.aa <- aminoAcids() 
   
-  # Old code
-  #selection.ci <- c() 
-  #mutation.ci <- c() 
-  
   # From getCSPEstimates.Rcpp_ROCParameter
   selection.sd <- vector("list")
   mutation.sd <- vector("list")
@@ -104,11 +100,6 @@ for (k in 1:numMixtures) {
     for (i in 1:length(codons)) 
     {
       # Push back these values to form vectors of length(codons) size.
-      #selection <- c(selection, parameter$getCodonSpecificPosteriorMean(mixture, samples*0.1, codons[i], 1, T)) 
-      #selection.ci <- c(selection.ci, parameter$getCodonSpecificVariance(mixture, samples*0.1, codons[i], 1, TRUE, T)) 
-      #mutation <- c(mutation, parameter$getCodonSpecificPosteriorMean(mixture, samples*0.1, codons[i], 0, T)) 
-      #mutation.ci <- c(mutation.ci, parameter$getCodonSpecificVariance(mixture, samples*0.1, codons[i], 0, TRUE, T)) 
-    
       # From getCSPEstimates.Rcpp_ROCParameter
       mutation <- c(mutation, parameter$getCodonSpecificPosteriorMean(mixture, samples*0.1, codons[i], 0, TRUE))
       mutation.sd <- c(mutation.sd, parameter$getCodonSpecificQuantile(mixture, samples*0.1, codons[i], 0, c(0.025, 0.975), TRUE)) 
@@ -123,11 +114,9 @@ for (k in 1:numMixtures) {
 
   plot(NULL, NULL, xlim=range(csp[idx.mu, 3], na.rm = T), ylim=range(mutation), 
        main = "Mutation", xlab = "True values", ylab = "Estimated values") 
-  #upper.panel.plot(x = csp[idx.mu, 3], y = mutation, sd.y = 1.96*sqrt(mutation.ci)) # Old code
   upper.panel.plot(x = csp[idx.mu, 3], y = mutation, sd.y = mutation.sd) # From getCSPEstimates.Rcpp_ROCParameter
   plot(NULL, NULL, xlim=range(csp[idx.eta, 3], na.rm = T), ylim=range(selection), 
        main = "Selection", xlab = "True values", ylab = "Estimated values") 
-  #upper.panel.plot(x = csp[idx.eta, 3], y = selection, sd.y = 1.96*sqrt(selection.ci)) # Old code
   upper.panel.plot(x = csp[idx.eta, 3], y = selection, sd.y = selection.sd)  # From getCSPEstimates.Rcpp_ROCParameter
   dev.off() 
 } 
