@@ -1,4 +1,4 @@
-rm(list=ls()) 
+rm(list=ls())
 library(ribModel)
 seeds <- read.table(file = "seed.txt")[,1]
 task.id <- 1 #as.numeric(Sys.getenv("SGE_TASK_ID"))
@@ -110,11 +110,11 @@ for (k in 1:numMixtures) {
       #mutation.ci <- c(mutation.ci, parameter$getCodonSpecificVariance(mixture, samples*0.1, codons[i], 0, TRUE, T)) 
     
       # From getCSPEstimates.Rcpp_ROCParameter
-      mutation <- c(mutation, parameter$getCodonSpecificPosteriorMean(mixture, samples, codons[i], 0, TRUE))
-      mutation.sd <- c(mutation.sd, parameter$getCodonSpecificQuantile(mixture, samples, codons[i], 0, c(0.025, 0.975), TRUE)) 
+      mutation <- c(mutation, parameter$getCodonSpecificPosteriorMean(mixture, samples*0.1, codons[i], 0, TRUE))
+      mutation.sd <- c(mutation.sd, parameter$getCodonSpecificQuantile(mixture, samples*0.1, codons[i], 0, c(0.025, 0.975), TRUE)) 
       
-      selection <- c(selection, parameter$getCodonSpecificPosteriorMean(mixture, samples, codons[i], 1, TRUE))
-      selection.sd <- c(selection.sd, parameter$getCodonSpecificQuantile(mixture, samples, codons[i], 1, c(0.025, 0.975), TRUE))      
+      selection <- c(selection, parameter$getCodonSpecificPosteriorMean(mixture, samples*0.1, codons[i], 1, TRUE))
+      selection.sd <- c(selection.sd, parameter$getCodonSpecificQuantile(mixture, samples*0.1, codons[i], 1, c(0.025, 0.975), TRUE))      
     } 
   }
   # From getCSPEstimates.Rcpp_ROCParameter

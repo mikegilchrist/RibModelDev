@@ -14,7 +14,7 @@ mixDef <- "allUnique"
 geneAssignment <- c(rep(1, length(genome)))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, model= "RFP", split.serine = TRUE, mixture.definition = mixDef)
 #parameter <- new(RFPParameter, "10000restartFile.rst")
-parameter <- initializeParameterObject(model = 'RFP', restart.file = "10000restartFile.rst")
+#parameter <- initializeParameterObject(model = 'RFP', restart.file = "10000restartFile.rst")
 
 #init from "true" values
 
@@ -101,12 +101,12 @@ for (i in 1:61)
 {
   codon <- codonList[i]
   alphaList[i] <- parameter$getCodonSpecificPosteriorMean(cat, samples * 0.5, codon, 0, F)
-  alphaTrace <- trace$getCodonSpecificParameterTraceByMixtureElementForCodon(1, codon, 0)
+  alphaTrace <- trace$getCodonSpecificParameterTraceByMixtureElementForCodon(1, codon, 0, F)
   alpha.ci[i,] <- quantile(alphaTrace[(samples * 0.5):samples], probs = c(0.025,0.975))
   
   
   lambdaPrimeList[i] <- parameter$getCodonSpecificPosteriorMean(cat, samples * 0.5, codon, 1, F)
-  lambdaPrimeTrace <- trace$getCodonSpecificParameterTraceByMixtureElementForCodon(1, codon, 1)
+  lambdaPrimeTrace <- trace$getCodonSpecificParameterTraceByMixtureElementForCodon(1, codon, 1, F)
   lambdaPrime.ci[i,] <- quantile(lambdaPrimeTrace[(samples * 0.5):samples], probs = c(0.025,0.975))
   waitingTimes[i] <- alphaList[i] * lambdaPrimeList[i]
 }
