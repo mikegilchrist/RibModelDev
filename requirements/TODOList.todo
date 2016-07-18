@@ -11,7 +11,7 @@ parameterObject.R
 
 *Function "splitMatrix" needs some commenting explaining what is going on.
 
-*"initializeCovarianceMatricies" need changes once covariance work is complete.
+*"initializeCovarianceMatrices" need changes once covariance work is complete.
 
 *Implement writeParameterObject for the FONSE model.
 

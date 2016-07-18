@@ -98,7 +98,7 @@ plot(trace, what = "Mutation", mixture = mixture)
 plot(trace, what = "Selection", mixture = mixture)
 
 # plots model fit (cub plot)
-plot(model, genome, parameter, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
+plot(model, genome, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
 
 
 names.aa <- aminoAcids()
@@ -142,7 +142,7 @@ plot(trace, what = "Mutation", mixture = mixture)
 plot(trace, what = "Selection", mixture = mixture)
 
 # plots model fit (cub plot)
-plot(model, genome, parameter, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
+plot(model, genome, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
 
 
 names.aa <- aminoAcids()

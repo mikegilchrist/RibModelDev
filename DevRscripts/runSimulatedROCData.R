@@ -52,7 +52,7 @@ plot(trace, what = "Mutation", mixture = 1)
 plot(trace, what = "Selection", mixture = 1)
 
 # plots model fit (cub plot)
-plot(model, genome, parameter, samples = samples*0.1, mixture = 1, main = "S. kluyveri Chr (A,B,Cleft) Codon Usage Plot")
+plot(model, genome, samples = samples*0.1, mixture = 1, main = "S. kluyveri Chr (A,B,Cleft) Codon Usage Plot")
 dev.off()
 
 plot(parameter, what = "Mutation", main = "Mutation Correlation, Not shared")

@@ -77,10 +77,9 @@ for (k in 1:numMixtures) {
   mixture <- k
   plot(trace, what = "Mutation", mixture = mixture)
   plot(trace, what = "Selection", mixture = mixture)
-  plot(model, genome, parameter, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
+  plot(model, genome, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
   names.aa <- aminoAcids() 
   
-  # From getCSPEstimates.Rcpp_ROCParameter
   selection.sd <- vector("list")
   mutation.sd <- vector("list")
   
@@ -100,7 +99,6 @@ for (k in 1:numMixtures) {
     for (i in 1:length(codons)) 
     {
       # Push back these values to form vectors of length(codons) size.
-      # From getCSPEstimates.Rcpp_ROCParameter
       mutation <- c(mutation, parameter$getCodonSpecificPosteriorMean(mixture, samples*0.1, codons[i], 0, TRUE))
       mutation.sd <- c(mutation.sd, parameter$getCodonSpecificQuantile(mixture, samples*0.1, codons[i], 0, c(0.025, 0.975), TRUE)) 
       
@@ -108,15 +106,14 @@ for (k in 1:numMixtures) {
       selection.sd <- c(selection.sd, parameter$getCodonSpecificQuantile(mixture, samples*0.1, codons[i], 1, c(0.025, 0.975), TRUE))      
     } 
   }
-  # From getCSPEstimates.Rcpp_ROCParameter
   mutation.sd <- matrix(unlist(mutation.sd), nrow = 2)
   selection.sd <- matrix(unlist(selection.sd), nrow = 2)
 
   plot(NULL, NULL, xlim=range(csp[idx.mu, 3], na.rm = T), ylim=range(mutation), 
        main = "Mutation", xlab = "True values", ylab = "Estimated values") 
-  upper.panel.plot(x = csp[idx.mu, 3], y = mutation, sd.y = mutation.sd) # From getCSPEstimates.Rcpp_ROCParameter
+  upper.panel.plot(x = csp[idx.mu, 3], y = mutation, sd.y = mutation.sd)
   plot(NULL, NULL, xlim=range(csp[idx.eta, 3], na.rm = T), ylim=range(selection), 
        main = "Selection", xlab = "True values", ylab = "Estimated values") 
-  upper.panel.plot(x = csp[idx.eta, 3], y = selection, sd.y = selection.sd)  # From getCSPEstimates.Rcpp_ROCParameter
+  upper.panel.plot(x = csp[idx.eta, 3], y = selection, sd.y = selection.sd)
   dev.off() 
 } 
