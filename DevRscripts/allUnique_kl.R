@@ -105,7 +105,7 @@ for(k in 1:numMixtures){
   mixture <- k 
   plot(trace, what = "Mutation", mixture = mixture)
   plot(trace, what = "Selection", mixture = mixture)
-  plot(model, genome, parameter, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
+  plot(model, genome, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
   names.aa <- aminoAcids() 
   selection.ci <- c() 
   mutation.ci <- c() 

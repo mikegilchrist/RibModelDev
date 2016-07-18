@@ -32,7 +32,7 @@ upper.panel.plot(obs.phi[mixtureAssignment == 2], expressionValues[mixtureAssign
 legend("topleft", legend = paste("Mixture Element", 1:numMixtures), 
        col = ribModel:::.mixtureColors[1:numMixtures], lty = rep(1, numMixtures), bty = "n")
 # plots model fit (cub plot)
-plot(model, genome, parameter, samples = samples*0.1, mixture = 1, main = "S. kluyveri Chr (A,B,Cleft) Codon Usage Plot")
+plot(model, genome, samples = samples*0.1, mixture = 1, main = "S. kluyveri Chr (A,B,Cleft) Codon Usage Plot")
 dev.off()
 
 plot(parameter, what = "Mutation", main = "Mutation Correlation, Not shared")

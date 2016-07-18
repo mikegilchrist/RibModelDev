@@ -6,6 +6,11 @@
 *.Rout
 *.Rhistory
 
+# LaTeX Stuff
+*.aux
+*.log
+*.toc
+
 # Compiled Object files
 *.slo
 *.lo
@@ -37,3 +42,4 @@
 
 # Mac stuff
 *.DS_Store
+
