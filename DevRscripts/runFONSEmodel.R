@@ -94,7 +94,7 @@ plot(trace, what = "Mutation", mixture = mixture)
 plot(trace, what = "Selection", mixture = mixture)
 #dev.off()
 # plots model fit (cub plot)
-#plot(model, genome, parameter, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
+#plot(model, genome, samples = samples*0.1, mixture = mixture, main = "Codon Usage Plot")
 
 #TODO: Ask Jeremy about the rest of this code since it doesn't seem to do much in RStudio.
 #However, the rest of the code before this is enough to judge how well the algorithm works.
