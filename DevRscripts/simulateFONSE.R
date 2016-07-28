@@ -1,7 +1,7 @@
 library(ribModel)
 rm(list=ls())
 
-genome <- initializeGenomeObject("../data/FONSE/genome_2000.fasta")
+genome <- initializeGenomeObject("../data/singleMixture/genome_2000.fasta")
 mutation.file <- "../data/FONSE/S.cer.mut.ref.csv"
 selection.file <- "../data/FONSE/selection3ref.csv"
 phi.file <- "../data/FONSE/genome_2000.phi.csv"
