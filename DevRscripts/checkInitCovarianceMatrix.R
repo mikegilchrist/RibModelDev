@@ -1,3 +1,5 @@
+### NOTE: As of July 29, 2016, this script no longer works. Would need debugging.
+
 library(ribModel)
 genome <- new(Genome)
 genome$readFasta("../data/realGenomes/Skluyveri_ChrA_andCleft.fasta", F)
