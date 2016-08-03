@@ -28,9 +28,9 @@ parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssig
 
 # initialize MCMC object. The MCMC loop will go for samples * thinning iterations.
 samples <- 1000
-thining <- 100
+thinning <- 100
 adaptiveWidth <- 10
-mcmc <- initializeMCMCObject(samples=samples, thining=thining, adaptive.width=adaptiveWidth, 
+mcmc <- initializeMCMCObject(samples=samples, thinning=thinning, adaptive.width=adaptiveWidth, 
                              est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE)
 # get model object
 model <- initializeModelObject(parameter, "FONSE")
@@ -52,7 +52,7 @@ system.time(
   runMCMC(mcmc, genome, model, 16)
 )
 
-full.name <- paste(run.name, samples*thining, sep="_")
+full.name <- paste(run.name, samples*thinning, sep="_")
 
 #Write the .Rdat files for both the parameter object and the MCMC object.
 writeParameterObject(parameter, file=paste(full.name, "ParamObject.Rdat", sep=""))

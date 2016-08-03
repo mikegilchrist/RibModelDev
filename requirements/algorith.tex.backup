@@ -56,11 +56,11 @@
         }else{
             logLikelihood += currLike;
         }
-        if((iteration % thining) == 0)
+        if((iteration % thinning) == 0)
         {
 	    for(unsigned k = 0u; k < numMixtures; k++)
 	    {
-	      parameter.updateExpressionTrace(iteration/thining, i, k);
+	      parameter.updateExpressionTrace(iteration/thinning, i, k);
 	    }
         }
     }

@@ -38,7 +38,7 @@
 =======
 >>>>>>> e44e754e0028b9530c242739ad64aeece6bd4142
             probabilities[k] = 
-	      parameter.getCategoryProbability(k, iteration/thining) * 
+	      parameter.getCategoryProbability(k, iteration/thinning) * 
 		std::exp(logLikRatio_current);
             currLike += probabilities[k];
             propLike += parameter.getCategoryProbability(k, i) * 
@@ -65,9 +65,9 @@
         }else{
             logLikelihood += currLike;
         }
-        if((iteration % thining) == 0)
+        if((iteration % thinning) == 0)
         {
-            parameter.updateExpressionTrace(iteration/thining, i);
+            parameter.updateExpressionTrace(iteration/thinning, i);
         }
     }
 <<<<<<< HEAD
@@ -80,7 +80,7 @@
       numMixtures, newMixtureProbabilities);
     for(unsigned k = 0u; k < numMixtures; k++)
     {
-      parameter.setCategoryProbability(k, iteration/thining, 
+      parameter.setCategoryProbability(k, iteration/thinning, 
 	newMixtureProbabilities[k]);
     }
     return logLikelihood;
@@ -175,9 +175,9 @@
         // moves proposed Sphi to current Sphi
         parameter.updateSphi();
     }
-    if((iteration % thining) == 0)
+    if((iteration % thinning) == 0)
     {
-        parameter.updateSphiTrace(iteration/thining);
+        parameter.updateSphiTrace(iteration/thinning);
     }
    \end{lstlisting}
   

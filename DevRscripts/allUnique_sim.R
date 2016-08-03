@@ -21,10 +21,10 @@ parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssig
 #parameter <- initializeParameterObject(restart.file = "5001_simulated_allUnique.rst")
 
 samples <- 10
-thining <- 10
+thinning <- 10
 adaptiveWidth <- 10
 divergence.iteration <- 0
-mcmc <- initializeMCMCObject(samples, thining, adaptive.width=adaptiveWidth, est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE) 
+mcmc <- initializeMCMCObject(samples, thinning, adaptive.width=adaptiveWidth, est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE) 
 
 setRestartSettings(mcmc, paste(task.id, "_simulated_allUnique.rst", sep=""), adaptiveWidth*50, TRUE) 
 
