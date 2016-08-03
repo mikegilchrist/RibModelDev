@@ -27,9 +27,9 @@ parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssig
 
 # initialize MCMC object. The MCMC loop will go for samples * thinning iterations.
 samples <- 1000
-thining <- 100
+thinning <- 100
 adaptiveWidth <- 10
-mcmc <- initializeMCMCObject(samples=samples, thining=thining, adaptive.width=adaptiveWidth,
+mcmc <- initializeMCMCObject(samples=samples, thinning=thinning, adaptive.width=adaptiveWidth,
                              est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE)
 # get model object
 model <- initializeModelObject(parameter, "FONSE")

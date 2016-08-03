@@ -35,10 +35,10 @@ parameter$initMutationCategories(c("../data/twoMixtures/simulated_mutation0.csv"
 parameter$initSelectionCategories(c("../data/twoMixtures/simulated_selection0.csv", "../data/twoMixtures/simulated_selection1.csv") , 2)
 # initialize MCMC object
 samples <- 10
-thining <- 10
+thinning <- 10
 adaptiveWidth <- 10
 divergence.iteration <- 0
-mcmc <- initializeMCMCObject(samples, thining, adaptive.width=adaptiveWidth, 
+mcmc <- initializeMCMCObject(samples, thinning, adaptive.width=adaptiveWidth, 
                              est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE)
 # get model object
 model <- initializeModelObject(parameter, "ROC", with.phi = with.phi)

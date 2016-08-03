@@ -34,10 +34,10 @@ parameter$initMutationCategories(c("../data/realGenomes/Skluyveri_mutation_ChrA.
 parameter$initSelectionCategories(c("../data/realGenomes/Skluyveri_selection_ChrA.csv", "../data/realGenomes/Skluyveri_selection_ChrCleft.csv") , 2)
 # initialize MCMC object
 samples <- 1000
-thining <- 10
+thinning <- 10
 adaptiveWidth <- 10
 divergence.iteration <- 0
-mcmc <- initializeMCMCObject(samples, thining, adaptive.width=adaptiveWidth, 
+mcmc <- initializeMCMCObject(samples, thinning, adaptive.width=adaptiveWidth, 
                              est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE)
 # get model object
 model <- initializeModelObject(parameter, "ROC", with.phi = with.phi)

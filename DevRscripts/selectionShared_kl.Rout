@@ -71,10 +71,10 @@ Warning messages:
   iterations terminated because half-step sizes are very small
 > 
 > samples <- 2000
-> thining <- 50
+> thinning <- 50
 > adaptiveWidth <- 10
 > divergence.iteration <- 20
-> mcmc <- initializeMCMCObject(samples, thining, adaptive.width=adaptiveWidth, est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE) 
+> mcmc <- initializeMCMCObject(samples, thinning, adaptive.width=adaptiveWidth, est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE) 
 > 
 > setRestartSettings(mcmc, paste(task.id, "_kluyveri_full_selectionShared.rst", sep=""), adaptiveWidth*50, TRUE) 
 > 

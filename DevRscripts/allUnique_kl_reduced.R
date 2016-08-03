@@ -19,10 +19,10 @@ geneAssignment <- c(rep(1,399), rep(2,457), rep(1, 644))
 parameter <- initializeParameterObject(genome, sphi_init, numMixtures, geneAssignment, split.serine = TRUE, mixture.definition = mixDef)
 
 samples <- 10
-thining <- 10
+thinning <- 10
 adaptiveWidth <- 10
 divergence.iteration <- 0
-mcmc <- initializeMCMCObject(samples, thining, adaptive.width=adaptiveWidth, est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE, est.mix = TRUE) 
+mcmc <- initializeMCMCObject(samples, thinning, adaptive.width=adaptiveWidth, est.expression=TRUE, est.csp=TRUE, est.hyper=TRUE, est.mix = TRUE) 
 
 setRestartSettings(mcmc, paste("_", task.id, "_kluyveri_reduced_allUnique.rst", sep=""), adaptiveWidth*50, TRUE) 
 
