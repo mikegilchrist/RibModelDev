@@ -217,12 +217,12 @@ Noting that the reasoning which led to equations \ref{eq:defPgi} and \ref{eq:def
 As a result,
 \begin{align}
   \label{eq:distYgSiteNse}
-  \Pr\left(\Ygi \middle| \alphai, \lambdaiprime, \psig, \sigmag(i-i)\right) 
+  \Pr\left(\Ygi \middle| \alphai, \lambdaiprime, \psig, \sigmag(i-1)\right) 
   &= \frac{\Gamma\left(\alphai + \Ygi\right)}{\Gamma\left(\alphai\right) \Ygi!} 
   \left(\frac{\psig \sigmag(i-1)}{\lambdaiprime + \psig \sigmag(i-1)}\right)^\Ygi \left(1-\frac{\psig\sigmag(i-1)}{\lambdaiprime + \psig \sigmag(i-1)}\right)^\alphai
 \end{align}
 where \ng is the number of amino acids encoded in gene $g$, i.e.~$\ng \ \sum_c \ngc$.
-As before, $\lambdacprime = \lambdac \Ztheta/\Ytotal$.
+As before, $\lambdacprime = \lambdac \Ztheta/\Ytotal$ and $\Ygi!$ can be dropped from any Likelihood calculations.
 Thus, in this model we have both $\lambdac$ and $\lambdacprime$, thus we have an additional, genome wide parameter to estimate $U = \Ztheta/\Ytotal$.
 For completeness, we  define $\phig$ as the target production rate of the functionality produced by a complete, error free protein, i.e. $\phig = \psig \sigmag(\ng)$.
 Thus, in the absence of translation errors, $\phig$ is equal to the total synthesis rate protein $g$, $\psig$.
