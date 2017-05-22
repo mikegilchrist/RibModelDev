@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{fullpage}
+\usepackage{float} %provides [H] for floats
 \usepackage{datetime} %provides \currenttime command
 \usepackage{xspace}
 \usepackage{amssymb,amsfonts,amsmath}
@@ -142,12 +143,13 @@ If $\Ytotal/\Ztheta \ll 1$, then sampling is sparse.
 
 Given the properties of the NB \citep[p.~141]{ForbesEtAl2011} and the fact that most codons appear within a gene's ORF multiple times, the likelihood of the parameters given the total number of RFP observed derived from codons of type $c$ in gene $g$, $\Ygc = \sum_{i=\in c} \Ygi$, is,
 \begin{align}
-  \Lik\left(\psig, \alphac, \lambdacprime \middle| \Ygc, \ngc\right) &= \frac{\Gamma\left(\ngc \alphac + \Ygc\right)}{\Gamma\left(\ngc \alphac\right) \Ygc!} 
+  \Lik\left(\psig, \alphac, \lambdacprime \middle| \Ygc, \ngc\right) &= \frac{\Gamma\left(\ngc \alphac + \Ygc\right)}{\Gamma\left(\ngc \alphac\right) } 
   \left(\frac{\psig}{\lambdacprime + \psig}\right)^\Ygc \left(1-\frac{\psig}{\lambdacprime + \psig}\right)^{\ngc \alphac}\\
-\label{eq:distYgCodon}&= \frac{\Gamma\left(\alphacgprime + \Ygc\right)}{\Gamma\left(\alphacgprime\right) \Ygc!} 
+\label{eq:distYgCodon}&= \frac{\Gamma\left(\alphacgprime + \Ygc\right)}{\Gamma\left(\alphacgprime\right)} 
   \left(\frac{\psig}{\lambdacprime + \psig}\right)^\Ygc \left(1-\frac{\psig}{\lambdacprime + \psig}\right)^{\alphacgprime}
 \end{align}
 where $\ngc$ is the number of times codon $c$ is found in the ORF of gene $g$ and $\alphacgprime = \ngc \times \alphac$.
+Note we dropped the $\Ygc!$ term because that will be the same for all parameter values.
 The total Likelihood of the data is
 \begin{equation}
   \Lik\left(\psigvec, \alphacvec, \lambdacprimevec \middle| \Ygcvec, \ngcvec\right) = \prod_{g \in \setG} \prod_{c \in \setC}  \Lik\left(\psig, \alphac, \lambdacprime \middle| \Ygc, \ngc\right)
@@ -239,7 +241,7 @@ First, we generate $W_i$  from $\text{Gamma}(\alphai, \lambdaiprime)$ and then w
 \label{paramDefs}
 \setlength\tymin{30pt}  %minimum column width
 %\setlength\tymax{200pt}  %maximum column width
-\begin{table}[H!]
+\begin{table}[H]
 %  \begin{tabulary}{\textwidth}{|>{$}C<{$}|L|>{$}C<{$}|} %>{$}C<{$}| should type set the column in math mode. Use \text{} to switch to text mode.
   \begin{tabulary}{\textwidth}{|C|L|C|} 
        \hline
