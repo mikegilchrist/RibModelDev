@@ -137,6 +137,8 @@ Explicitly,
   \left(\frac{\mg \kappag}{\lambdacprime + \mg \kappag}\right)^\Ygi \left(1-\frac{\mg \kappag}{\lambdacprime + \mg \kappag}\right)^\alphac
 \end{align}
 Note that $\mg$ and \kappag are gene $g$ and environment specific terms which can be equated to the equilibrium protein synthesis initiation rate $\psig$ for gene $g$ under the experimental conditions, i.e.~$\psig = \kappag \mg$.
+Further, because in this model nonsense errors are ignored, all ribosomes that initiate translation also complete translation.
+Thus, the initiation rate \psig is also equal to the synthesis rate \phig.
 The composite parameter \lambdacprime consists of the codon specific scale term \lambdac and  the ratio of \Ztheta to \Ytotal, two genome wide parameters.
 The term \Ytotal/\Ztheta can be interpreted as the sampling efficiency, i.e.~what proportion of the RFP state space is sampled.
 If $\Ytotal/\Ztheta \ll 1$, then sampling is sparse.
@@ -154,7 +156,7 @@ The total Likelihood of the data is
 \begin{equation}
   \Lik\left(\psigvec, \alphacvec, \lambdacprimevec \middle| \Ygcvec, \ngcvec\right) = \prod_{g \in \setG} \prod_{c \in \setC}  \Lik\left(\psig, \alphac, \lambdacprime \middle| \Ygc, \ngc\right)
 \end{equation}
-Note that using RFP data alone, $\kappag \times \mg = \phi$ and $\lambdacprime = \lambdac \Ztheta/\Ytotal$ are only identifiable as joint parameters. 
+Note that using RFP data alone, $\kappag \times \mg = \psig$ and $\lambdacprime = \lambdac \Ztheta/\Ytotal$ are only identifiable as joint parameters. 
 (Although it seems like you should be able to calculate \Ztheta post-hoc from the state of the chain and estimates of \mg are available from other sources.)
 Most standard libraries require that the $x$ parameter in a NB be discrete, which in this case it is not.
 Thus to simulate \Yg values based on equations (\ref{eq:distYgSite}) or (\ref{eq:distYgCodon}), first pull $W$ from Gamma(\ngc \alphac, \lambdacprime)\footnote{recall that \lambdacprime is the 'rate' parameter}, then pull $Y$ from Poisson($W \psig$).
