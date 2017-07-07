@@ -41,6 +41,7 @@
 \newcommand{\betac}{\ensuremath{{\beta_c}}\xspace}
 \newcommand{\muc}{\ensuremath{{\mu_c}}\xspace}
 \newcommand{\sigmag}{\ensuremath{\sigma_{g}}\xspace}
+\newcommand{\Sigmag}{\ensuremath{\Sigma_{g}}\xspace}
 
 \newcommand{\pgi}{\ensuremath{{p_{g,i}}}\xspace}
 \newcommand{\Pgi}{\ensuremath{{P_{g,i}}}\xspace}
@@ -236,7 +237,8 @@ Furthermore, while the NSE model requires the likelihood for each position be ca
 \subsection*{Simulation}
 Unlike with the Pausing Time Model, we cannot aggregate codon specific RPF counts within a gene.
 Instead we have to simulate each position and as before we simulate in two steps.
-First, we generate $W_i$  from $\text{Gamma}(\alphac, \lambdacprime)$ and then we generate $\Ygi$ from $\text{Poisson}\left(\psi_g \, \sigmag(i-1)\, W_i\right)$
+First, we generate $W_i$  from $\text{Gamma}(\alphac, \lambdacprime)$ and then we generate $\Ygi$ from $\text{Poisson}\left(\psi_g \, \sigmag(i-1)\, W_i\right)$ where here $\sigmag(i) = \prod_{j=1}^i v_j/\left(v_j + W_j\right)$.
+We use this form instead of the result in Eq.~(\ref{eq:defSigmag}), because when simulating data, $W_j$ is known and, as a result, integration is unnecessary.
 
 
 \section*{Parameter Definitions}
