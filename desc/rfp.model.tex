@@ -219,9 +219,9 @@ Noting that the reasoning which led to equations \ref{eq:defPgi} and \ref{eq:def
 As a result,
 \begin{align}
   \label{eq:distYgSiteNse}
-  \Pr\left(\Ygi \middle| \alphai, \lambdaiprime, \psig, \sigmag(i-1)\right) 
-  &= \frac{\Gamma\left(\alphai + \Ygi\right)}{\Gamma\left(\alphai\right) \Ygi!} 
-  \left(\frac{\psig \sigmag(i-1)}{\lambdaiprime + \psig \sigmag(i-1)}\right)^\Ygi \left(1-\frac{\psig\sigmag(i-1)}{\lambdaiprime + \psig \sigmag(i-1)}\right)^\alphai
+  \Pr\left(\Ygi \middle| \alphac, \lambdacprime, \psig, \sigmag(i-1)\right) 
+  &= \frac{\Gamma\left(\alphac + \Ygi\right)}{\Gamma\left(\alphac\right) \Ygi!} 
+  \left(\frac{\psig \sigmag(i-1)}{\lambdacprime + \psig \sigmag(i-1)}\right)^\Ygi \left(1-\frac{\psig\sigmag(i-1)}{\lambdacprime + \psig \sigmag(i-1)}\right)^\alphac
 \end{align}
 where \ng is the number of amino acids encoded in gene $g$, i.e.~$\ng \ \sum_c \ngc$.
 As before, $\lambdacprime = \lambdac \Ztheta/\Ytotal$ and $\Ygi!$ can be dropped from any Likelihood calculations.
@@ -236,7 +236,7 @@ Furthermore, while the NSE model requires the likelihood for each position be ca
 \subsection*{Simulation}
 Unlike with the Pausing Time Model, we cannot aggregate codon specific RPF counts within a gene.
 Instead we have to simulate each position and as before we simulate in two steps.
-First, we generate $W_i$  from $\text{Gamma}(\alphai, \lambdaiprime)$ and then we generate $\Ygi$ from $\text{Poisson}\left(\psi_g \, \sigmag(i-1)\, W_i\right)$
+First, we generate $W_i$  from $\text{Gamma}(\alphac, \lambdacprime)$ and then we generate $\Ygi$ from $\text{Poisson}\left(\psi_g \, \sigmag(i-1)\, W_i\right)$
 
 
 \section*{Parameter Definitions}
