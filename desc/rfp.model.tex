@@ -130,7 +130,12 @@ where \mg is the density of \mRNAg in the cell and \Ztheta is a partition functi
   \label{eq:defZtheta}
   \Ztheta = \sum_g \mg \left(\sum_i \pgi\right).
 \end{equation}
-Equations (\ref{eq:defPgi}) and (\ref{eq:defZtheta}) indicate that our choices of time and volume units for \kappag and \mg are irrelevant and we can only estimate their values relative to one another.
+Equations (\ref{eq:defPgi}) and (\ref{eq:defZtheta}) indicate that our choices of time and volume units for \kappag and \mg are irrelevant and we can only estimate their values relative to one another.\\\\
+To simplfy calculations we can derive an expected value for $\Ztheta$ as,
+\begin{equation}
+ \label{eq:defExpZtheta}
+ E(\Ztheta) = E(\sum_g m_g \sum_i p_{g,i}) = \sum_g \psi_g \sum_c n_{c,g} (\frac{\alpha_c}{\lambda_c})
+\end{equation}
 
 %We will do our best to avoid calculting \Ztheta directly and, instead, treat it as an unknown variable and attempt to sample from its posterior distribution.
 
