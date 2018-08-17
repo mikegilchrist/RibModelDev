@@ -84,6 +84,8 @@
 \begin{itemize}
 \item Initial model  by mikeg on 6/10/15.
 \item NSE model added by mikeg on 7/21/15.
+\item Fixed error for Pr(Elongation at position $j$) in Equation (\ref{eq:defElongPrII}) by adding $\lambda_j v_{g,i}$ term.
+  Additionally, applied fix to Equation (\ref{eq:defSigmag}) by adding missing term to product term.
 \item Compiled on \today \ at \ \currenttime
  \end{itemize}
 \subsection*{Goal}
@@ -199,7 +201,8 @@ Letting $f(\alpha, \lambda)$ represent the PDF of the Gamma distribution, the co
 \begin{align}
   \label{eq:defElongPr}
 \Pr(\text{Elongation at position $j$}) &= \int_0^\infty \frac{\vgj}{\wgj + \vgj} f\left(\wgj | \alphaj, \lambdaj\right) d\wgj\\
- &= \exp\left[\lambdaj \vgj\right] E_{p = \alphaj}\left(\lambdaj \vgj\right)
+ \label{eq:defElongPrII}
+ &= \lambdaj \vgj \exp\left[\lambdaj \vgj\right] E_{p = \alphaj}\left(\lambdaj \vgj\right)
 \end{align}
 where $E_p(z)$ is the generalized exponential integral function (also referred to as Schlomilch functions \citep[][p.380]{OldhamEtAl2009} and is represented as,
 \begin{equation}
@@ -210,9 +213,9 @@ where $\Gamma(1-p,z)$ is the upper incomplete gamma function.
 See \href{http://dlmf.nist.gov/8.19}{http://dlmf.nist.gov/8.19} for more details.
 
 Assuming independence in \wgi between positions, 
-  \label{eq:defSigmag}
 \begin{align}
-  \sigmag(i) &=  \exp\left[\sum_{j=1}^i \lambdaj \vgj\right]  \prod_{j=1}^{i} E_{\alphaj}\left(\lambdaj \vgj\right)
+  \label{eq:defSigmag}
+  \sigmag(i) &=  \exp\left[\sum_{j=1}^i \lambdaj \vgj\right]  \prod_{j=1}^{i} \lambdaj \vgj  E_{\alphaj}\left(\lambdaj \vgj\right)
 \end{align}
 Note that these \lambdaj terms are equivalent to \lambdac (but not \lambdacprime, which is used below).
 
@@ -225,7 +228,8 @@ As a result,
   \left(\frac{\psig \sigmag(i-1)}{\lambdacprime + \psig \sigmag(i-1)}\right)^\Ygi \left(1-\frac{\psig\sigmag(i-1)}{\lambdacprime + \psig \sigmag(i-1)}\right)^\alphac
 \end{align}
 where \ng is the number of amino acids encoded in gene $g$, i.e.~$\ng \ \sum_c \ngc$.
-As before, $\lambdacprime = \lambdac \Ztheta/\Ytotal$ and $\Ygi!$ can be dropped from any Likelihood calculations.
+As before, $\kappag \times \mg = \psig$ and $\lambdacprime = \lambdac \Ztheta/\Ytotal$.
+Note also that $\Ygi!$ can be dropped from any Likelihood calculations.
 Thus, in this model we have both $\lambdac$ and $\lambdacprime$, thus we have an additional, genome wide parameter to estimate $U = \Ztheta/\Ytotal$.
 For completeness, we  define $\phig$ as the target production rate of the functionality produced by a complete, error free protein, i.e. $\phig = \psig \sigmag(\ng)$.
 Thus, in the absence of translation errors, $\phig$ is equal to the total synthesis rate protein $g$, $\psig$.
