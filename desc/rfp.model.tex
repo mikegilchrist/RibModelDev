@@ -44,6 +44,8 @@
 \newcommand{\vgi}{\ensuremath{\nseTerm_{g,i}}\xspace}
 \newcommand{\vgj}{\ensuremath{\nseTerm_{g,j}}\xspace}
 \newcommand{\vgc}{\ensuremath{\vc_{g}}\xspace}
+\newcommand{\vi}{\ensuremath{\nseTerm_{g,i}}\xspace}
+\newcommand{\vj}{\ensuremath{\nseTerm_{g,j}}\xspace}
 \newcommand{\betac}{\ensuremath{{\beta_c}}\xspace}
 \newcommand{\muc}{\ensuremath{{\mu_c}}\xspace}
 \newcommand{\sigmag}{\ensuremath{\sigma_{g}}\xspace}
@@ -196,8 +198,8 @@ Instead, following \citet{GilchristAndWagner2006}, we have the conditional proba
 \end{equation} 
 Where, as before, \kappag is the translation initiation rate constant per \mRNAg, \wgi is the waiting time to elongate codon $i$, and  \wgi is 1 over the codon elongation rate ($1/c_i$ in rate based, rather than waiting time, terminology) and \vgi is the NSE 'wait' time, i.e.~1 over the NSE rate ($1/b_i$ in rate based terminology), and $\sigma(i-1)$ is the probability a ribosome that initiates translation will reach the $i$th codon.
 Note that because the waiting time to a NSE, \vgi, is so much greater than the elongation waiting time \wgi we can ignore the actual variation in \vgi between codons of the same type (this is easier to understand if you consider $0 < b_i \ll 1$).
-Thus while we allow \vgi to be codon specific, we treat each of these values as fixed.
-Further, again because $\vgi \gg \wgi$, we can approximate $\frac{\wgi \vgi}{\wgi + \vgi}$ as $\wgi$ based on a Taylor series expansion around $1/\vgi = 0 $.
+Thus while we allow \vgi to be codon specific, we treat each of these values as fixed and use \vi instead of \vgi.
+Further, again because $\vi \gg \wgi$, we can approximate $\frac{\wgi \vi}{\wgi + \vi}$ as $\wgi$ based on a Taylor series expansion around $1/\vi = 0 $.
 Thus,
 \begin{equation}
 \label{eq:defpgiNseApprox}
@@ -210,10 +212,10 @@ The function $\sigma(i-1)$ depends on the probability of successful elongation a
 When the waiting time for elongation each position $j$ is known, then
  \begin{align}
   \label{eq:defElongPr}
-\Pr(\text{Elongation at position $j$}) &=\frac{\vgj}{\wgj + \vgj} \\
+\Pr(\text{Elongation at position $j$}) &=\frac{\vj}{\wgj + \vj} \\
 \intertext{and}
    \label{eq:defSigmag}
-   \sigma\left(i-1\right) = \prod_{j=1}^{i-1} \frac{\vgj}{\wgj + \vgj}
+   \sigma\left(i-1\right) = \prod_{j=1}^{i-1} \frac{\vj}{\wgj + \vj}
 \end{align}
 
 However, when fitting the model we don't wish to actually estimate individual \wgj values, but instead the parameters of the $\text{Gamma}\left(\alphaj, \lambdaj\right)$ distribution the \wgj are drawn from.
@@ -221,9 +223,9 @@ Thus we treat \wgj as a random variable whose uncertainty we integrate across to
 Letting $f(\alpha, \lambda)$ represent the PDF of the Gamma distribution, the expectation of the codon specific elongation probability is
 \begin{align}
 \label{eq:defEElongPr}
-E\left[\Pr(\text{Elongation at position $j$})\right] &= \int_0^\infty \frac{\vgj}{\wgj + \vgj} f\left(\wgj | \alphaj, \lambdaj\right) d\wgj\\
+E\left[\Pr(\text{Elongation at position $j$})\right] &= \int_0^\infty \frac{\vj}{\wgj + \vj} f\left(\wgj | \alphaj, \lambdaj\right) d\wgj\\
 \label{eq:defEElongPrII}
- &= \lambdaj \vgj \exp\left[\lambdaj \vgj\right] E_{p = \alphaj}\left(\lambdaj \vgj\right)
+ &= \lambdaj \vj \exp\left[\lambdaj \vj\right] E_{p = \alphaj}\left(\lambdaj \vj\right)
 \end{align}
 where $E_p(z)$ is the generalized exponential integral function (also referred to as Schlomilch functions \citep[][p.380]{OldhamEtAl2009} and is represented as,
 \begin{equation}
@@ -237,16 +239,21 @@ Note that, although the complete Gamma function is discontinous at negative inte
 Using this formulation, 
 \begin{align}
 \label{eq:defEElongPrIII}
-E\left[\Pr(\text{Elongation at position $j$})\right] &= \exp\left[\lambdaj \vgj\right] \left(\lambdaj \vgj\right)^\alphaj  \Gamma(1-\alphaj, \lambdaj \vgj)
+E\left[\Pr(\text{Elongation at position $j$})\right] &= \exp\left[\lambdaj \vj\right] \left(\lambdaj \vj\right)^\alphaj  \Gamma(1-\alphaj, \lambdaj \vj)
 \end{align}
-Given the complexity of this result, it may be worthwhile to explore Taylor Series approximations around $1/\vgj = 0$ or $\vgj = c_j b$ where $c_j$ is a codon specific scaling factor $>0$ and $b$ is the mean nonsense error rate. . 
 
 Assuming independence in \wgi between positions means that the expected value of $\sigmag(i)$ is, 
 \begin{align}
 \label{eq:defESigmag}
-  \Esigmagi &=  \exp\left[\sum_{j=1}^i \lambdaj \vgj\right]  \prod_{j=1}^{i}\left(\lambdaj \vgj  E_{\alphaj}\left(\lambdaj \vgj\right) \right)
+  \Esigmagi &=  \exp\left[\sum_{j=1}^i \lambdaj \vj\right]  \prod_{j=1}^{i}\left(\lambdaj \vj  E_{\alphaj}\left(\lambdaj \vj\right) \right)
 \end{align}
 Note that these \lambdaj terms are equivalent to \lambdac (but not \lambdacprime, which is used below).
+
+To approximate \Esigmagi, we set $\vj = 1/(c_j b)$ where $c_j$ is a codon specific scaling factor $>0$ and $b$ is the mean nonsense error rate and taking a first order Taylor Series approximation around $b=0$.
+\begin{align}
+\label{eq:approxESigmag}
+  \Esigmagi &\approx 1 - \sum_{j=1}^i \frac{\alphaj}{\lambdaj \vj}+ O(\bar{1/v})
+\end{align}
 
 Noting that the reasoning which led to equations \ref{eq:defPgi} and \ref{eq:defZtheta} for the pausing time model should still apply if we use Equation (\ref{eq:defpgiNse}) for \pgi, rather than Equation (\ref{eq:defpgi}). 
 As a result,
