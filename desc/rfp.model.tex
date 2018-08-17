@@ -15,6 +15,12 @@
 \newcommand{\wgi}{\ensuremath{\waitTerm_{g,i}}\xspace}
 \newcommand{\wgj}{\ensuremath{\waitTerm_{g,j}}\xspace}
 \newcommand{\wgc}{\ensuremath{\wc_{g}}\xspace}
+\newcommand{\WaitTerm}{\ensuremath{w}\xspace} %realization of random variate
+\newcommand{\Wc}{\ensuremath{\WaitTerm^c}\xspace}
+\newcommand{\Wgi}{\ensuremath{\WaitTerm_{g,i}}\xspace}
+\newcommand{\Wgj}{\ensuremath{\WaitTerm_{g,j}}\xspace}
+\newcommand{\Wgc}{\ensuremath{\Wc_{g}}\xspace}
+
 \newcommand{\alphai}{\ensuremath{{\alpha_i}}\xspace}
 \newcommand{\alphaj}{\ensuremath{{\alpha_j}}\xspace}
 \newcommand{\alphac}{\ensuremath{{\alpha_c}}\xspace}
@@ -41,7 +47,9 @@
 \newcommand{\betac}{\ensuremath{{\beta_c}}\xspace}
 \newcommand{\muc}{\ensuremath{{\mu_c}}\xspace}
 \newcommand{\sigmag}{\ensuremath{\sigma_{g}}\xspace}
-\newcommand{\Sigmag}{\ensuremath{\Sigma_{g}}\xspace}
+\newcommand{\sigmagi}{\ensuremath{\sigma_{g}(i)}\xspace}
+\newcommand{\Esigmagi}{\ensuremath{E\left[\sigma_{g}(i)\right]}\xspace}
+\newcommand{\Esigmagimone}{\ensuremath{E\left[\sigma_{g}(i-1)\right]}\xspace}
 
 \newcommand{\pgi}{\ensuremath{{p_{g,i}}}\xspace}
 \newcommand{\Pgi}{\ensuremath{{P_{g,i}}}\xspace}
@@ -84,8 +92,9 @@
 \begin{itemize}
 \item Initial model  by mikeg on 6/10/15.
 \item NSE model added by mikeg on 7/21/15.
-\item Fixed error for Pr(Elongation at position $j$) in Equation (\ref{eq:defElongPrII}) by adding $\lambda_j v_{g,i}$ term.
-  Additionally, applied fix to Equation (\ref{eq:defSigmag}) by adding missing term to product term.
+\item Fixed error for Pr(Elongation at position $j$) in Equation (\ref{eq:defEElongPrII}) by adding $\lambda_j v_{g,i}$ term.
+  Additionally, applied fix to Equation (\ref{eq:defESigmag}) by adding missing term to product term.
+Added notes about expecting $\alphac > 0$.
 \item Compiled on \today \ at \ \currenttime
  \end{itemize}
 \subsection*{Goal}
@@ -113,7 +122,8 @@ The values of \wgi for the relevant codon likely vary within a gene as a functio
 To capture this variation, we will assume that for when the codon at position $i$ is of type $c$, $\wgi \sim \text{Gamma}(\alphac, \lambdac)$, where \alphac is the shape parameter, \lambdac is the rate parameter, and $E[\wgi] = \alphac/\lambdac$. %originally thought we were using the 'scale' formulation, but double checking Mathematica code indicates we are using the 'rate' formulation.
 Gene specific effects could also be incorporated since  mRNA structures which interfere with efficient translation likely declines with expression level.
 As a result of this assumption, we can use a Negative-Binomial (NB) distribution model to analyze the RFP data.
-
+Regarding values of $\alphac$, no variation in waiting times between instances of the same codon would correspond to an exponential model or $\alphac = 1$.
+Given that we expect heterogeneity between sites, we expect $\alphac > 1$.
 
 Assuming independence in sampling, the total probability of a randomly selected footprint is from position $i$, $\Pgi$, is
 \begin{equation} \label{eq:defPgi}
@@ -197,11 +207,22 @@ which is equivalent to the simple pausing time calculation except $\pgi$ is redu
 
 
 The function $\sigma(i-1)$ depends on the probability of successful elongation at the $i-1$ upstream codons.
-Letting $f(\alpha, \lambda)$ represent the PDF of the Gamma distribution, the codon specific elongation probability is
-\begin{align}
+When the waiting time for elongation each position $j$ is known, then
+ \begin{align}
   \label{eq:defElongPr}
-\Pr(\text{Elongation at position $j$}) &= \int_0^\infty \frac{\vgj}{\wgj + \vgj} f\left(\wgj | \alphaj, \lambdaj\right) d\wgj\\
- \label{eq:defElongPrII}
+\Pr(\text{Elongation at position $j$}) &=\frac{\vgj}{\wgj + \vgj} \\
+\intertext{and}
+   \label{eq:defSigmag}
+   \sigma\left(i-1\right) = \prod_{j=1}^{i-1} \frac{\vgj}{\wgj + \vgj}
+\end{align}
+
+However, when fitting the model we don't wish to actually estimate individual \wgj values, but instead the parameters of the $\text{Gamma}\left(\alphaj, \lambdaj\right)$ distribution the \wgj are drawn from.
+Thus we treat \wgj as a random variable whose uncertainty we integrate across to get an expected value.
+Letting $f(\alpha, \lambda)$ represent the PDF of the Gamma distribution, the expectation of the codon specific elongation probability is
+\begin{align}
+\label{eq:defEElongPr}
+E\left[\Pr(\text{Elongation at position $j$})\right] &= \int_0^\infty \frac{\vgj}{\wgj + \vgj} f\left(\wgj | \alphaj, \lambdaj\right) d\wgj\\
+\label{eq:defEElongPrII}
  &= \lambdaj \vgj \exp\left[\lambdaj \vgj\right] E_{p = \alphaj}\left(\lambdaj \vgj\right)
 \end{align}
 where $E_p(z)$ is the generalized exponential integral function (also referred to as Schlomilch functions \citep[][p.380]{OldhamEtAl2009} and is represented as,
@@ -211,11 +232,19 @@ where $E_p(z)$ is the generalized exponential integral function (also referred t
 \end{equation}
 where $\Gamma(1-p,z)$ is the upper incomplete gamma function.
 See \href{http://dlmf.nist.gov/8.19}{http://dlmf.nist.gov/8.19} for more details.
+Note that, although the complete Gamma function is discontinous at negative interger values, the upper incomplete is well defined even at negative integers so long as $z>0$.
 
-Assuming independence in \wgi between positions, 
+Using this formulation, 
 \begin{align}
-  \label{eq:defSigmag}
-  \sigmag(i) &=  \exp\left[\sum_{j=1}^i \lambdaj \vgj\right]  \prod_{j=1}^{i} \lambdaj \vgj  E_{\alphaj}\left(\lambdaj \vgj\right)
+\label{eq:defEElongPrIII}
+E\left[\Pr(\text{Elongation at position $j$})\right] &= \exp\left[\lambdaj \vgj\right] \left(\lambdaj \vgj\right)^\alphaj  \Gamma(1-\alphaj, \lambdaj \vgj)
+\end{align}
+Given the complexity of this result, it may be worthwhile to explore Taylor Series approximations around $1/\vgj = 0$ or $\vgj = c_j b$ where $c_j$ is a codon specific scaling factor $>0$ and $b$ is the mean nonsense error rate. . 
+
+Assuming independence in \wgi between positions means that the expected value of $\sigmag(i)$ is, 
+\begin{align}
+\label{eq:defESigmag}
+  \Esigmagi &=  \exp\left[\sum_{j=1}^i \lambdaj \vgj\right]  \prod_{j=1}^{i}\left(\lambdaj \vgj  E_{\alphaj}\left(\lambdaj \vgj\right) \right)
 \end{align}
 Note that these \lambdaj terms are equivalent to \lambdac (but not \lambdacprime, which is used below).
 
@@ -223,9 +252,9 @@ Noting that the reasoning which led to equations \ref{eq:defPgi} and \ref{eq:def
 As a result,
 \begin{align}
   \label{eq:distYgSiteNse}
-  \Pr\left(\Ygi \middle| \alphac, \lambdacprime, \psig, \sigmag(i-1)\right) 
+  \Pr\left(\Ygi \middle| \alphac, \lambdacprime, \psig, \Esigmagimone\right) 
   &= \frac{\Gamma\left(\alphac + \Ygi\right)}{\Gamma\left(\alphac\right) \Ygi!} 
-  \left(\frac{\psig \sigmag(i-1)}{\lambdacprime + \psig \sigmag(i-1)}\right)^\Ygi \left(1-\frac{\psig\sigmag(i-1)}{\lambdacprime + \psig \sigmag(i-1)}\right)^\alphac
+  \left(\frac{\psig \Esigmagimone}{\lambdacprime + \psig \Esigmagimone}\right)^\Ygi \left(1-\frac{\psig\Esigmagimone}{\lambdacprime + \psig \Esigmagimone}\right)^\alphac
 \end{align}
 where \ng is the number of amino acids encoded in gene $g$, i.e.~$\ng \ \sum_c \ngc$.
 As before, $\kappag \times \mg = \psig$ and $\lambdacprime = \lambdac \Ztheta/\Ytotal$.
@@ -234,15 +263,17 @@ Thus, in this model we have both $\lambdac$ and $\lambdacprime$, thus we have an
 For completeness, we  define $\phig$ as the target production rate of the functionality produced by a complete, error free protein, i.e. $\phig = \psig \sigmag(\ng)$.
 Thus, in the absence of translation errors, $\phig$ is equal to the total synthesis rate protein $g$, $\psig$.
 In contrast, in the presence of translation errors, $\psig > \phig$ since the translation initiation rate must be elevated to compensate for the reduction in protein functionality due to translation errors.
-Furthermore, while the NSE model requires the likelihood for each position be calculated separately, the underlying terms for $\sigmag(i-1)$ need only be calculated once per parameter evaluation since it is only how these terms are combined that varies between codons at different positions.
+Furthermore, while the NSE model requires the likelihood for each position be calculated separately, the underlying terms for $\Esigmagimone$ need only be calculated once per parameter evaluation since it is only how these terms are combined that varies between codons at different positions.
 
 
 
 \subsection*{Simulation}
 Unlike with the Pausing Time Model, we cannot aggregate codon specific RPF counts within a gene.
 Instead we have to simulate each position and as before we simulate in two steps.
-First, we generate $W_i$  from $\text{Gamma}(\alphac, \lambdacprime)$ and then we generate $\Ygi$ from $\text{Poisson}\left(\psi_g \, \sigmag(i-1)\, W_i\right)$ where here $\sigmag(i) = \prod_{j=1}^i v_j/\left(v_j + W_j\right)$.
-We use this form instead of the result in Eq.~(\ref{eq:defSigmag}), because when simulating data, $W_j$ is known and, as a result, integration is unnecessary.
+First, we generate $\Wgi$  from $\text{Gamma}(\alphac, \lambdacprime)$ and then we generate $\Ygi$ from $\text{Poisson}\left(\psi_g \, \sigmag(i-1)\, \Wgi\right)$.
+Note we are using $\sigmagi$ as defined in Eq.~(\ref{eq:defSigmag}) and not $\Esigmagi$, because when simulating data, $\wgi$ is known and, as a result, integration is unnecessary.
+Note that $\psig$ values are scaled by the footprinting sequencing effort.
+Thus, we may find that you need scale all of your $\psig$ values up or down by a constant term such that the expected number of footprints is on par with the number observed for a given set of genes.
 
 
 \section*{Parameter Definitions}
@@ -263,7 +294,8 @@ We use this form instead of the result in Eq.~(\ref{eq:defSigmag}), because when
             Equal to $\mg \kappag \sigmag(\ng)$ which is initiation rate discounted by the expected functionality of a protein.& 1/t\\
     \psig &  Rate of initiation of protein synthesis under a given set of conditions. 
              Equal to $\mg \kappag = \phig/\sigmag(\ng)$ and, thus, is always greater than or equal to $\phig$. & 1/t\\ 
-    \sigmag(i) & Probability ribosome reaches and successfully translate codon $i$. & \\
+    \sigmagi & Probability ribosome reaches and successfully translate codon $i$. & \\
+    \Esigmagi& Expectation of \sigmagi used when fitting model to data. & \\
 
     \pgi & Probability a ribosome is found at position $i$ on an mRNA transcript from gene $g$ when translation initiation and completion of mRNA is at steady state. &\\%$\pgi \prop \kappag \wgi$ & \\
     \Pgi & Probability of observing a footprint for position $i$ of mRNA from gene $g$.& \\%$\Pgi = \left(\pgi \mg\right)/\Ztheta$.& \\
