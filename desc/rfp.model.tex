@@ -58,6 +58,7 @@
 \newcommand{\sigmag}{\ensuremath{\sigma_{g}}\xspace}
 \newcommand{\sigmagi}{\ensuremath{\sigma_{g}(i)}\xspace}
 \newcommand{\Esigmagi}{\ensuremath{E\left[\sigma_{g}(i)\right]}\xspace}
+\newcommand{\Esigmai}{\ensuremath{E\left[\sigma(i)\right]}\xspace}
 \newcommand{\Esigmagimone}{\ensuremath{E\left[\sigma_{g}(i-1)\right]}\xspace}
 
 \newcommand{\pgi}{\ensuremath{{p_{g,i}}}\xspace}
@@ -260,8 +261,8 @@ E\left[\Pr(\text{Ribosome Sampled is at position $j$})\right] &= \exp\left[\lamb
 
 Assuming independence in \wgi between positions means that the expected value of $\sigmag(i)$ is, 
 \begin{align}
-\label{eq:defESigmag}
-  \Esigmagi &=  \exp\left[\sum_{j=1}^i \lambdaj \vj\right]  \prod_{j=1}^{i}\left(\lambdaj \vj  E_{\alphaj}\left(\lambdaj \vj\right) \right)
+\label{eq:defESigma}
+  \Esigmai &=  \exp\left[\sum_{j=1}^i \lambdaj \vj\right]  \prod_{j=1}^{i}\left(\lambdaj \vj  E_{\alphaj}\left(\lambdaj \vj\right) \right)
 \end{align}
 Note that these \lambdaj terms are equivalent to \lambdac (but not \lambdacprime, which is used below).
 
@@ -270,17 +271,30 @@ We could, alternatively, define $\prod_i^n c_j = 1$ which would make $b = f(\vec
 Either way, taking a first order Taylor Series approximation around $b= f(\vec{v}) =0$.
 \begin{align}
 \label{eq:approxESigmag}
-  \Esigmagi &= 1 - \sum_{j=1}^i \frac{\alphaj}{\lambdaj \vj}+ O(b^2)
+  \Esigmai &= 1 - \sum_{j=1}^i \frac{\alphaj}{\lambdaj \vj}+ O(b^2)
 \end{align}
 
 The second order approximation around $b=0$ is,
 \begin{align}
 \label{eq:secondOrderApproxESigmag}
-  \Esigmagi &= 1 + \sum_{j=1}^i \left[\frac{\alphaj}{\lambdaj \vj} \left(-1+\sum_{k=1}^i\frac{\alphak}{\lambdak \vk} \right)+\frac{\alphaj}{\lambdaj^2 \vj^2}\right] +  O(b^3)
+  \Esigmai &= 1 + \sum_{j=1}^i \left[\frac{\alphaj}{\lambdaj \vj} \left(-1+\sum_{k=1}^i\frac{\alphak}{\lambdak \vk} \right)+\frac{\alphaj}{\lambdaj^2 \vj^2}\right] +  O(b^3)\\
 \intertext{which can be written in terms of the moments of \wi}
 &= 1 + \sum_{j=1}^i \left[\frac{E\left[\wj\right]}{\vj} \left(-1+\sum_{k=1}^i\frac{E\left[\wk\right]}{ \vk} \right)+\frac{\Var\left(\wj\right)}{\vj^2}\right] +  O(b^3)
 \end{align}
 Note also that there should be a way to represent and, hopefully, efficiently calculatethe above equation using matrix notation.
+
+An alternative is to approximate $\ln(\sigma_i)$ around $b=0$ and then exponentiate this approximation.
+The first order approximation is,
+\begin{align}
+\ln(\Esigmai) &= - \sum_{j=1}^i \frac{\alphaj}{\lambdaj \vj} + O(b^2)
+\end{align}
+The second order approximation is,
+\begin{align}
+\ln(\Esigmai) &= \sum_{j=1}^i \left[-\frac{\alphaj}{\lambdaj \vj} + \frac{\alphaj}{\lambdaj^2 \vj^2} + \frac{1}{2} \left(\frac{\alphaj}{\lambdaj \vj}\right)^2\right]+ O(b^3)\\
+\intertext{which can be written in terms of the moments of \wi}
+\ln(\Esigmai) &= \sum_{j=1}^i \left[-\frac{E\left(\wj\right)}{\vj} + \frac{\Var\left(\wj\right)}{ \vj^2} + \frac{1}{2} \left(\frac{E\left(\wj\right)}{\vj}\right)^2\right]+ O(b^3)
+\end{align}
+which seems simpler to compute, but I am unsure if and when it would perform better.
 
 Noting that the reasoning which led to equations \ref{eq:defPgi} and \ref{eq:defZtheta} for the pausing time model should still apply if we use Equation (\ref{eq:defpgiNse}) for \pgi, rather than Equation (\ref{eq:defpgi}). 
 As a result,
