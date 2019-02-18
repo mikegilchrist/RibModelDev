@@ -9,11 +9,15 @@
 \usepackage[doublespacing]{setspace}
 \usepackage{tabulary} %Allows multirowed columns whose width is calculated automatically. Similar to tabularx but allows column width to vary between column types and calculated based on content of columns.  See p 253 of Mittelbach and Gossens LaTeX Companion, 2nd Ed
 \usepackage[colorlinks=true,urlcolor=blue]{hyperref} %usage: \href{http://...}{link representation}
+\usepackage{ulem}
 
-\newcommand{\waitTerm}{\ensuremath{w}\xspace}
-\newcommand{\wc}{\ensuremath{\waitTerm^c}\xspace}
-\newcommand{\wgi}{\ensuremath{\waitTerm_{g,i}}\xspace}
-\newcommand{\wgj}{\ensuremath{\waitTerm_{g,j}}\xspace}
+\newcommand{\elongWaitTime}{\ensuremath{w}\xspace}
+\newcommand{\wc}{\ensuremath{\elongWaitTime^c}\xspace}
+\newcommand{\wi}{\ensuremath{\elongWaitTime_i}\xspace}
+\newcommand{\wj}{\ensuremath{\elongWaitTime_j}\xspace}
+\newcommand{\wk}{\ensuremath{\elongWaitTime_k}\xspace}
+\newcommand{\wgi}{\ensuremath{\elongWaitTime_{g,i}}\xspace}
+\newcommand{\wgj}{\ensuremath{\elongWaitTime_{g,j}}\xspace}
 \newcommand{\wgc}{\ensuremath{\wc_{g}}\xspace}
 \newcommand{\WaitTerm}{\ensuremath{w}\xspace} %realization of random variate
 \newcommand{\Wc}{\ensuremath{\WaitTerm^c}\xspace}
@@ -23,6 +27,7 @@
 
 \newcommand{\alphai}{\ensuremath{{\alpha_i}}\xspace}
 \newcommand{\alphaj}{\ensuremath{{\alpha_j}}\xspace}
+\newcommand{\alphak}{\ensuremath{{\alpha_k}}\xspace}
 \newcommand{\alphac}{\ensuremath{{\alpha_c}}\xspace}
 \newcommand{\alphacgprime}{\ensuremath{{\alpha_{c,g}^\prime}}\xspace}
 \newcommand{\alphacvec}{\ensuremath{{\vec{\alpha}_c}}\xspace}
@@ -33,22 +38,27 @@
 \newcommand{\lambdaiprime}{\ensuremath{{\lambda_i^\prime}}\xspace}
 \newcommand{\lambdaiprimevec}{\ensuremath{{\vec{\lambda}_i^\prime}}\xspace}
 \newcommand{\lambdaj}{\ensuremath{{\lambda_j}}\xspace}
+\newcommand{\lambdak}{\ensuremath{{\lambda_k}}\xspace}
 \newcommand{\lambdajprime}{\ensuremath{{\lambda_j^\prime}}\xspace}
 \newcommand{\lambdajprimevec}{\ensuremath{{\vec{\lambda}_j^\prime}}\xspace}
 
 
 
 %Nonsense error terms
-\newcommand{\nseTerm}{\ensuremath{v}\xspace}
-\newcommand{\vc}{\ensuremath{\nseTerm^c}\xspace}
-\newcommand{\vgi}{\ensuremath{\nseTerm_{g,i}}\xspace}
-\newcommand{\vgj}{\ensuremath{\nseTerm_{g,j}}\xspace}
+\newcommand{\nseWaitTime}{\ensuremath{v}\xspace}
+\newcommand{\vc}{\ensuremath{\nseWaitTime^c}\xspace}
+\newcommand{\vgi}{\ensuremath{\nseWaitTime_{g,i}}\xspace}
+\newcommand{\vgj}{\ensuremath{\nseWaitTime_{g,j}}\xspace}
 \newcommand{\vgc}{\ensuremath{\vc_{g}}\xspace}
+\newcommand{\vi}{\ensuremath{\nseWaitTime_{i}}\xspace}
+\newcommand{\vj}{\ensuremath{\nseWaitTime_{j}}\xspace}
+\newcommand{\vk}{\ensuremath{\nseWaitTime_{k}}\xspace}
 \newcommand{\betac}{\ensuremath{{\beta_c}}\xspace}
 \newcommand{\muc}{\ensuremath{{\mu_c}}\xspace}
 \newcommand{\sigmag}{\ensuremath{\sigma_{g}}\xspace}
 \newcommand{\sigmagi}{\ensuremath{\sigma_{g}(i)}\xspace}
 \newcommand{\Esigmagi}{\ensuremath{E\left[\sigma_{g}(i)\right]}\xspace}
+\newcommand{\Esigmai}{\ensuremath{E\left[\sigma(i)\right]}\xspace}
 \newcommand{\Esigmagimone}{\ensuremath{E\left[\sigma_{g}(i-1)\right]}\xspace}
 
 \newcommand{\pgi}{\ensuremath{{p_{g,i}}}\xspace}
@@ -77,6 +87,7 @@
 \newcommand{\Lik}{\ensuremath{\text{L}}\xspace}
 \newcommand{\setG}{\ensuremath{\mathbb{G}}\xspace}
 \newcommand{\setC}{\ensuremath{\mathbb{C}}\xspace}
+\newcommand{\Var}{\ensuremath{\text{Var}}\xspace}
 %\newcommand{\}{\ensuremath{\}\xspace}
 %\newcommand{\}{\ensuremath{\}\xspace}
 
@@ -92,6 +103,15 @@
 \begin{itemize}
 \item Initial model  by mikeg on 6/10/15.
 \item NSE model added by mikeg on 7/21/15.
+\item 08/16/28: Fixed error for Pr(Elongation at position $j$) in Equation (\ref{eq:defEElongPrII}) by adding $\lambda_j v_{g,i}$ term.
+  Additionally, applied fix to Equation (\ref{eq:defESigma}) by adding missing term to product term.
+Added notes about expecting $\alphac > 0$.
+\item 08/20/18
+  \begin{itemize}
+  \item Replace Pr(Elongation at position $j$) with Pr(Ribosome sampled is at position $j$)
+  \item Added math analysis is partially documented in \texttt{rfp.math.nb} which was added to the repository.
+  \item Added second order approximation of $\sigma_i$
+  \end{itemize}
 \item Compiled on \today \ at \ \currenttime
  \end{itemize}
 \subsection*{Goal}
@@ -119,7 +139,8 @@ The values of \wgi for the relevant codon likely vary within a gene as a functio
 To capture this variation, we will assume that for when the codon at position $i$ is of type $c$, $\wgi \sim \text{Gamma}(\alphac, \lambdac)$, where \alphac is the shape parameter, \lambdac is the rate parameter, and $E[\wgi] = \alphac/\lambdac$. %originally thought we were using the 'scale' formulation, but double checking Mathematica code indicates we are using the 'rate' formulation.
 Gene specific effects could also be incorporated since  mRNA structures which interfere with efficient translation likely declines with expression level.
 As a result of this assumption, we can use a Negative-Binomial (NB) distribution model to analyze the RFP data.
-
+Regarding values of $\alphac$, no variation in waiting times between instances of the same codon would correspond to an exponential model or $\alphac = 1$.
+Given that we expect heterogeneity between sites, we expect $\alphac > 1$.
 
 Assuming independence in sampling, the total probability of a randomly selected footprint is from position $i$, $\Pgi$, is
 \begin{equation} \label{eq:defPgi}
@@ -130,7 +151,9 @@ where \mg is the density of \mRNAg in the cell and \Ztheta is a partition functi
   \label{eq:defZtheta}
   \Ztheta = \sum_g \mg \left(\sum_i \pgi\right).
 \end{equation}
-Equations (\ref{eq:defPgi}) and (\ref{eq:defZtheta}) indicate that our choices of time and volume units for \kappag and \mg are irrelevant and we can only estimate their values relative to one another.\\\\
+Equations (\ref{eq:defPgi}) and (\ref{eq:defZtheta}) indicate that our choices of time and volume units for \kappag and \mg are irrelevant and we can only estimate their values relative to one another.
+This is because our choice of time units for $\kappag$ and density for $m_g$ will rescale both \pgi and, thus $\Ygi$ and $Z$.
+One solution is to define $\bar{\kappag} \bar{\mg} = \bar{\psig}$ = 1 or choose a gene $r$ and define $\psi_r = 1$.
 To simplfy calculations we can derive an expected value for $\Ztheta$ as,
 \begin{equation}
  \label{eq:defExpZtheta}
@@ -179,7 +202,7 @@ Thus to simulate \Yg values based on equations (\ref{eq:distYgSite}) or (\ref{eq
 If we assume that $\Mg \sim \text{Poisson}(\Ytotal \mg)$, we can easily combine both the RFP and the mRNA counts together and estimate $\kappag$ and $\mg$ separately.
 Alternatively, we could estimate the composite \kappag \mg parameter using the RPF data and then analyze the those results using the \Mg data.
 
-An additional fact worth noting is that we are treating $Z$ as a constant for much of our calculations when, in fact, it is a random variate.
+\sout{An additional fact worth noting is that we are treating $Z$ as a constant for much of our calculations when, in fact, it is a random variate.}\marginpar{08/20/18: I don't think this is true.}
 We should discuss this with Russ to ensure there are no issues.
 
 %\subsection*{Simulation}
@@ -197,8 +220,8 @@ Instead, following \citet{GilchristAndWagner2006}, we have the conditional proba
 \end{equation} 
 Where, as before, \kappag is the translation initiation rate constant per \mRNAg, \wgi is the waiting time to elongate codon $i$, and  \wgi is 1 over the codon elongation rate ($1/c_i$ in rate based, rather than waiting time, terminology) and \vgi is the NSE 'wait' time, i.e.~1 over the NSE rate ($1/b_i$ in rate based terminology), and $\sigma(i-1)$ is the probability a ribosome that initiates translation will reach the $i$th codon.
 Note that because the waiting time to a NSE, \vgi, is so much greater than the elongation waiting time \wgi we can ignore the actual variation in \vgi between codons of the same type (this is easier to understand if you consider $0 < b_i \ll 1$).
-Thus while we allow \vgi to be codon specific, we treat each of these values as fixed.
-Further, again because $\vgi \gg \wgi$, we can approximate $\frac{\wgi \vgi}{\wgi + \vgi}$ as $\wgi$ based on a Taylor series expansion around $1/\vgi = 0 $.
+Thus while we allow \vgi to be codon specific, we treat each of these values as fixed and use \vi instead of \vgi.
+Further, again because $\vi \gg \wgi$, we can approximate $\frac{\wgi \vi}{\wgi + \vi}$ as $\wgi$ based on a Taylor series expansion around $1/\vi = 0 $.
 Thus,
 \begin{equation}
 \label{eq:defpgiNseApprox}
@@ -211,19 +234,20 @@ The function $\sigma(i-1)$ depends on the probability of successful elongation a
 When the waiting time for elongation each position $j$ is known, then
  \begin{align}
   \label{eq:defElongPr}
-\Pr(\text{Elongation at position $j$}) &=\frac{\vgj}{\wgj + \vgj} \\
+\Pr(\text{Ribosome Sampled is at position $j$}) &=\frac{\vj}{\wgj + \vj} \\
 \intertext{and}
    \label{eq:defSigmag}
-   \sigma\left(i-1\right) = \prod_{j=1}^{i-1} \frac{\vgj}{\wgj + \vgj}
+   \sigma\left(i-1\right) = \prod_{j=1}^{i-1} \frac{\vj}{\wgj + \vj}
 \end{align}
 
 However, when fitting the model we don't wish to actually estimate individual \wgj values, but instead the parameters of the $\text{Gamma}\left(\alphaj, \lambdaj\right)$ distribution the \wgj are drawn from.
 Thus we treat \wgj as a random variable whose uncertainty we integrate across to get an expected value.
 Letting $f(\alpha, \lambda)$ represent the PDF of the Gamma distribution, the expectation of the codon specific elongation probability is
 \begin{align}
-  \label{eq:defEElongPr}
-E\left[\Pr(\text{Elongation at position $j$})\right] &= \int_0^\infty \frac{\vgj}{\wgj + \vgj} f\left(\wgj | \alphaj, \lambdaj\right) d\wgj\\
- &= \exp\left[\lambdaj \vgj\right] E_{p = \alphaj}\left(\lambdaj \vgj\right)
+\label{eq:defEElongPr}
+E\left[\Pr(\text{Ribosome Sampled is at position $j$})\right] &= \int_0^\infty \frac{\vj}{\wgj + \vj} f\left(\wgj | \alphaj, \lambdaj\right) d\wgj\\
+\label{eq:defEElongPrII}
+ &= \lambdaj \vj \exp\left[\lambdaj \vj\right] E_{p = \alphaj}\left(\lambdaj \vj\right)
 \end{align}
 where $E_p(z)$ is the generalized exponential integral function (also referred to as Schlomilch functions \citep[][p.380]{OldhamEtAl2009} and is represented as,
 \begin{equation}
@@ -232,31 +256,82 @@ where $E_p(z)$ is the generalized exponential integral function (also referred t
 \end{equation}
 where $\Gamma(1-p,z)$ is the upper incomplete gamma function.
 See \href{http://dlmf.nist.gov/8.19}{http://dlmf.nist.gov/8.19} for more details.
-Given the complexity of this result, it may be worthwhile to explore Taylor Series approximations around $1/\vgj = 0$. 
+Note that, although the complete Gamma function is discontinous at negative interger values, the upper incomplete is well defined even at negative integers so long as $z>0$.
+
+Using this formulation, 
+\begin{align}
+\label{eq:defEElongPrIII}
+E\left[\Pr(\text{Ribosome Sampled is at position $j$})\right] &= \exp\left[\lambdaj \vj\right] \left(\lambdaj \vj\right)^\alphaj  \Gamma(1-\alphaj, \lambdaj \vj)
+\end{align}
 
 Assuming independence in \wgi between positions means that the expected value of $\sigmag(i)$ is, 
 \begin{align}
-  \label{eq:defESigmag}
-  \Esigmagi &=  \exp\left[\sum_{j=1}^i \lambdaj \vgj\right]  \prod_{j=1}^{i} E_{\alphaj}\left(\lambdaj \vgj\right)
+\label{eq:defESigma}
+  \Esigmai &=  \exp\left[\sum_{j=1}^i \lambdaj \vj\right]  \prod_{j=1}^{i}\left(\lambdaj \vj  E_{\alphaj}\left(\lambdaj \vj\right) \right)
 \end{align}
 Note that these \lambdaj terms are equivalent to \lambdac (but not \lambdacprime, which is used below).
+
+To approximate \Esigmagi, we set $\vi = 1/(c_i b)$ where $c_i$ is a codon specific scaling factor which we assume $c_i>0$ and define $\sum_i^n c_i = 1$ such that $b = f(\vec{v})=  1/n \sum_i^n 1/\vi$ is the mean nonsense error rate.
+We could, alternatively, define $\prod_i^n c_j = 1$ which would make $b = f(\vec{v}) =  \prod_i^n (1/\vi)^{1/n}$ the geometric mean of $1/vi$.
+Either way, taking a first order Taylor Series approximation around $b= f(\vec{v}) =0$.
+\begin{align}
+\label{eq:approxESigmag}
+  \Esigmai &= 1 - \sum_{j=1}^i \frac{\alphaj}{\lambdaj \vj}+ O(b^2)
+\end{align}
+
+The second order approximation around $b=0$ is,
+\begin{align}
+\label{eq:secondOrderApproxESigmag}
+  \Esigmai &= 1 + \sum_{j=1}^i \left[\frac{\alphaj}{\lambdaj \vj} \left(-1+\sum_{k=1}^i\frac{\alphak}{\lambdak \vk} \right)+\frac{\alphaj}{\lambdaj^2 \vj^2}\right] +  O(b^3)\\
+\intertext{which can be written in terms of the moments of \wi}
+&= 1 + \sum_{j=1}^i \left[\frac{E\left[\wj\right]}{\vj} \left(-1+\sum_{k=1}^i\frac{E\left[\wk\right]}{ \vk} \right)+\frac{\Var\left(\wj\right)}{\vj^2}\right] +  O(b^3)
+\end{align}
+Note also that there should be a way to represent and, hopefully, efficiently calculatethe above equation using matrix notation.
+
+An alternative is to approximate $\ln(\sigma_i)$ around $b=0$ and then exponentiate this approximation.
+The first order approximation is,
+\begin{align}
+\ln(\Esigmai) &= - \sum_{j=1}^i \frac{\alphaj}{\lambdaj \vj} + O(b^2)
+\end{align}
+The second order approximation is,
+\begin{align}
+\ln(\Esigmai) &= \sum_{j=1}^i \left[-\frac{\alphaj}{\lambdaj \vj} + \frac{\alphaj}{\lambdaj^2 \vj^2} + \frac{1}{2} \left(\frac{\alphaj}{\lambdaj \vj}\right)^2\right]+ O(b^3)\\
+\intertext{which can be written in terms of the moments of \wi}
+\ln(\Esigmai) &= \sum_{j=1}^i \left[-\frac{E\left(\wj\right)}{\vj} + \frac{\Var\left(\wj\right)}{ \vj^2} + \frac{1}{2} \left(\frac{E\left(\wj\right)}{\vj}\right)^2\right]+ O(b^3)
+\end{align}
+which seems simpler to compute, but I am unsure if and when it would perform better.
 
 Noting that the reasoning which led to equations \ref{eq:defPgi} and \ref{eq:defZtheta} for the pausing time model should still apply if we use Equation (\ref{eq:defpgiNse}) for \pgi, rather than Equation (\ref{eq:defpgi}). 
 As a result,
 \begin{align}
-  \label{eq:distYgSiteNse}
+\label{eq:distYgSiteNse}
   \Pr\left(\Ygi \middle| \alphac, \lambdacprime, \psig, \Esigmagimone\right) 
   &= \frac{\Gamma\left(\alphac + \Ygi\right)}{\Gamma\left(\alphac\right) \Ygi!} 
   \left(\frac{\psig \Esigmagimone}{\lambdacprime + \psig \Esigmagimone}\right)^\Ygi \left(1-\frac{\psig\Esigmagimone}{\lambdacprime + \psig \Esigmagimone}\right)^\alphac
+\intertext{or, equivalently}
+\label{eq:distYgSiteNseII}
+&= \frac{\Gamma\left(\alphac + \Ygi\right)}{\Gamma\left(\alphac\right) \Ygi!}
+  \left(\frac{\psig \Esigmagimone}{\lambdacprime + \psig \Esigmagimone}\right)^\Ygi \left(\frac{\lambdacprime}{\lambdacprime + \psig \Esigmagimone}\right)^\alphac
 \end{align}
 where \ng is the number of amino acids encoded in gene $g$, i.e.~$\ng \ \sum_c \ngc$.
-As before, $\lambdacprime = \lambdac \Ztheta/\Ytotal$ and $\Ygi!$ can be dropped from any Likelihood calculations.
-Thus, in this model we have both $\lambdac$ and $\lambdacprime$, thus we have an additional, genome wide parameter to estimate $U = \Ztheta/\Ytotal$.
+As before, $\kappag \times \mg = \psig$ and $\lambdacprime = \lambdac \Ztheta/\Ytotal$.
+Note also that $\Ygi!$ can be dropped from any Likelihood calculations and that the \pgi terms used to calculate \Ztheta include $\sigma(i-1)$ terms.
+Further, note that $Z$ implicitly has the average value of $\psi_g$ in it and, so our choice of scale for $\psi_g$ will, in turn, scale, $Z$.
+Thus, in this model we have both $\lambdac$ and $\lambdacprime$ and, as a result, we have an additional, genome wide parameter to estimate $U = \Ztheta/\Ytotal$.
+
 For completeness, we  define $\phig$ as the target production rate of the functionality produced by a complete, error free protein, i.e. $\phig = \psig \sigmag(\ng)$.
 Thus, in the absence of translation errors, $\phig$ is equal to the total synthesis rate protein $g$, $\psig$.
 In contrast, in the presence of translation errors, $\psig > \phig$ since the translation initiation rate must be elevated to compensate for the reduction in protein functionality due to translation errors.
 Furthermore, while the NSE model requires the likelihood for each position be calculated separately, the underlying terms for $\Esigmagimone$ need only be calculated once per parameter evaluation since it is only how these terms are combined that varies between codons at different positions.
 
+%%INCOMPLETE ANALYSIS
+%If we have limited sampling such that $Z \gg Y$, then it would follow that $\lambdaprime \gg \psig \Esigmagimone$ and we'd get,
+%\begin{align}
+%\label{eq:distYgSiteNseLimitedSampling}
+%  \Pr\left(\Ygi \middle| \alphac, \lambdacprime, \psig, \Esigmagimone\right)
+%&= \frac{\Gamma\left(\alphac + \Ygi\right)}{\Gamma\left(\alphac\right) \Ygi!}
+%  \left(\frac{\psig \Esigmagimone}{\lambdacprime + \psig \Esigmagimone}\right)^\Ygi \left(\frac{\lambdacprime}{\lambdacprime + \psig \Esigmagimone}\right)^\alphac\\
+%& \approx 
 
 
 \subsection*{Simulation}
