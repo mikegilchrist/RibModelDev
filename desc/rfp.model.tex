@@ -57,6 +57,8 @@
 \newcommand{\muc}{\ensuremath{{\mu_c}}\xspace}
 \newcommand{\sigmag}{\ensuremath{\sigma_{g}}\xspace}
 \newcommand{\sigmagi}{\ensuremath{\sigma_{g}(i)}\xspace}
+\newcommand{\sigmagng}{\ensuremath{\sigma_{g}(\ng)}\xspace}
+\newcommand{\sigmagn}{\sigmagng}
 \newcommand{\Esigmagi}{\ensuremath{E\left[\sigma_{g}(i)\right]}\xspace}
 \newcommand{\Esigmai}{\ensuremath{E\left[\sigma(i)\right]}\xspace}
 \newcommand{\Esigmagimone}{\ensuremath{E\left[\sigma_{g}(i-1)\right]}\xspace}
@@ -70,9 +72,9 @@
 \newcommand{\ns}{\ensuremath{{n_s}}\xspace}
 \newcommand{\mg}{\ensuremath{{m_g}}\xspace}
 \newcommand{\Mg}{\ensuremath{{M_g}}\xspace}
-\newcommand{\psig}{\ensuremath{{\psi_g}}\xspace}
+\newcommand{\iotag}{\ensuremath{{\iota_g}}\xspace}
 \newcommand{\phig}{\ensuremath{{\phi_g}}\xspace}
-\newcommand{\psie}{\ensuremath{{\psi_g^e}}\xspace}
+\newcommand{\iotae}{\ensuremath{{\iota_g^e}}\xspace}
 %\newcommand{\lambdagi}{\ensuremath{{\lambda_{g,i}}}\xspace}
 %\newcommand{\lambdagc}{\ensuremath{{\lambda_{g}^c}}\xspace}
 \newcommand{\kappag}{\ensuremath{{\kappa_{g}}}\xspace}
@@ -95,7 +97,7 @@
 \newcommand{\Ygcvec}{\ensuremath{{\Vec{\Ygc}}}\xspace}
 \newcommand{\kappagvec}{\ensuremath{{\Vec{\kappag}}}\xspace}
 \newcommand{\ngcvec}{\ensuremath{{\Vec{\ngc}}}\xspace}
-\newcommand{\psigvec}{\ensuremath{{\Vec{\psig}}}\xspace}
+\newcommand{\iotavec}{\ensuremath{{\Vec{\iotag}}}\xspace}
 \begin{document}
 
 
@@ -153,11 +155,17 @@ where \mg is the density of \mRNAg in the cell and \Ztheta is a partition functi
 \end{equation}
 Equations (\ref{eq:defPgi}) and (\ref{eq:defZtheta}) indicate that our choices of time and volume units for \kappag and \mg are irrelevant and we can only estimate their values relative to one another.
 This is because our choice of time units for $\kappag$ and density for $m_g$ will rescale both \pgi and, thus $\Ygi$ and $Z$.
-One solution is to define $\bar{\kappag} \bar{\mg} = \bar{\psig}$ = 1 or choose a gene $r$ and define $\psi_r = 1$.
+One solution is to use the same approach in our other work and  scale time such that the average protein production rate across genes $E_g\left(\kappag \mg \sigmang\right) = 1$ where \sigmang is the probability a ribosome completes translation of the \ng codons in gene $g$.
+For our current model where we ignore nonsense errors, \sigmagng = 1 and, thus, $\phig = \kappag \mg$.
+An alternative would be to constrain $E_g\left(\kappag \mg\right) = 1$, i.e. independent of \sigmang.
+\footnote{Prior to 06 Mar 2019 we we used $\psi$ instead of $\iota$ (see below).
+  However, this use of $\psi$ was not wholly consistent with how $\psi$ was defined in \selac where $\psi$ is the  target protein functionality production rate so we've changed our notation.
+  }
+  
 To simplfy calculations we can derive an expected value for $\Ztheta$ as,
 \begin{equation}
  \label{eq:defExpZtheta}
- E(\Ztheta) = E(\sum_g m_g \sum_i p_{g,i}) = \sum_g \psi_g \sum_c n_{c,g} (\frac{\alpha_c}{\lambda_c})
+ E(\Ztheta) = E(\sum_g m_g \sum_i p_{g,i}) = \sum_g \kappag \mg  \sum_c n_{c,g} (\frac{\alpha_c}{\lambda_c})
 \end{equation}
 
 %We will do our best to avoid calculting \Ztheta directly and, instead, treat it as an unknown variable and attempt to sample from its posterior distribution.
@@ -173,30 +181,30 @@ Explicitly,
   &=\frac{\Gamma\left(\alphac + \Ygi\right)}{\Gamma\left(\alphac\right) \Ygi!} 
   \left(\frac{\mg \kappag}{\lambdacprime + \mg \kappag}\right)^\Ygi \left(1-\frac{\mg \kappag}{\lambdacprime + \mg \kappag}\right)^\alphac
 \end{align}
-Note that $\mg$ and \kappag are gene $g$ and environment specific terms which can be equated to the equilibrium protein synthesis initiation rate $\psig$ for gene $g$ under the experimental conditions, i.e.~$\psig = \kappag \mg$.
+Note that $\mg$ and \kappag are gene $g$ and environment specific terms which can be equated to the equilibrium protein synthesis initiation rate $\iotag$ for gene $g$ under the experimental conditions, i.e.~$\iotag = \kappag \mg$.
 Further, because in this model nonsense errors are ignored, all ribosomes that initiate translation also complete translation.
-Thus, the initiation rate \psig is also equal to the synthesis rate \phig.
+Thus, the initiation rate \iotag is also equal to the synthesis rate \phig.
 The composite parameter \lambdacprime consists of the codon specific scale term \lambdac and  the ratio of \Ztheta to \Ytotal, two genome wide parameters.
 The term \Ytotal/\Ztheta can be interpreted as the sampling efficiency, i.e.~what proportion of the RFP state space is sampled.
 If $\Ytotal/\Ztheta \ll 1$, then sampling is sparse.
 
 Given the properties of the NB \citep[p.~141]{ForbesEtAl2011} and the fact that most codons appear within a gene's ORF multiple times, the likelihood of the parameters given the total number of RFP observed derived from codons of type $c$ in gene $g$, $\Ygc = \sum_{i=\in c} \Ygi$, is,
 \begin{align}
-  \Lik\left(\psig, \alphac, \lambdacprime \middle| \Ygc, \ngc\right) &= \frac{\Gamma\left(\ngc \alphac + \Ygc\right)}{\Gamma\left(\ngc \alphac\right) } 
-  \left(\frac{\psig}{\lambdacprime + \psig}\right)^\Ygc \left(1-\frac{\psig}{\lambdacprime + \psig}\right)^{\ngc \alphac}\\
+  \Lik\left(\iotag, \alphac, \lambdacprime \middle| \Ygc, \ngc\right) &= \frac{\Gamma\left(\ngc \alphac + \Ygc\right)}{\Gamma\left(\ngc \alphac\right) } 
+  \left(\frac{\iotag}{\lambdacprime + \iotag}\right)^\Ygc \left(1-\frac{\iotag}{\lambdacprime + \iotag}\right)^{\ngc \alphac}\\
 \label{eq:distYgCodon}&= \frac{\Gamma\left(\alphacgprime + \Ygc\right)}{\Gamma\left(\alphacgprime\right)} 
-  \left(\frac{\psig}{\lambdacprime + \psig}\right)^\Ygc \left(1-\frac{\psig}{\lambdacprime + \psig}\right)^{\alphacgprime}
+  \left(\frac{\iotag}{\lambdacprime + \iotag}\right)^\Ygc \left(1-\frac{\iotag}{\lambdacprime + \iotag}\right)^{\alphacgprime}
 \end{align}
 where $\ngc$ is the number of times codon $c$ is found in the ORF of gene $g$ and $\alphacgprime = \ngc \times \alphac$.
 Note we dropped the $\Ygc!$ term because that will be the same for all parameter values.
 The total Likelihood of the data is
 \begin{equation}
-  \Lik\left(\psigvec, \alphacvec, \lambdacprimevec \middle| \Ygcvec, \ngcvec\right) = \prod_{g \in \setG} \prod_{c \in \setC}  \Lik\left(\psig, \alphac, \lambdacprime \middle| \Ygc, \ngc\right)
+  \Lik\left(\iotagvec, \alphacvec, \lambdacprimevec \middle| \Ygcvec, \ngcvec\right) = \prod_{g \in \setG} \prod_{c \in \setC}  \Lik\left(\iotag, \alphac, \lambdacprime \middle| \Ygc, \ngc\right)
 \end{equation}
-Note that using RFP data alone, $\kappag \times \mg = \psig$ and $\lambdacprime = \lambdac \Ztheta/\Ytotal$ are only identifiable as joint parameters. 
+Note that using RFP data alone, $\kappag \times \mg = \iotag$ and $\lambdacprime = \lambdac \Ztheta/\Ytotal$ are only identifiable as joint parameters. 
 (Although it seems like you should be able to calculate \Ztheta post-hoc from the state of the chain and estimates of \mg are available from other sources.)
 Most standard libraries require that the $x$ parameter in a NB be discrete, which in this case it is not.
-Thus to simulate \Yg values based on equations (\ref{eq:distYgSite}) or (\ref{eq:distYgCodon}), first pull $W$ from Gamma(\ngc \alphac, \lambdacprime)\footnote{recall that \lambdacprime is the 'rate' parameter}, then pull $Y$ from Poisson($W \psig$).
+Thus to simulate \Yg values based on equations (\ref{eq:distYgSite}) or (\ref{eq:distYgCodon}), first pull $W$ from Gamma(\ngc \alphac, \lambdacprime)\footnote{recall that \lambdacprime is the 'rate' parameter}, then pull $Y$ from Poisson($W \iotag$).
   
 \citet{PopEtAl2014} provide RNA-Seq based counts of mRNA abundances, \Mg, in addition to RFP counts.
 If we assume that $\Mg \sim \text{Poisson}(\Ytotal \mg)$, we can easily combine both the RFP and the mRNA counts together and estimate $\kappag$ and $\mg$ separately.
@@ -305,42 +313,42 @@ Noting that the reasoning which led to equations \ref{eq:defPgi} and \ref{eq:def
 As a result,
 \begin{align}
 \label{eq:distYgSiteNse}
-  \Pr\left(\Ygi \middle| \alphac, \lambdacprime, \psig, \Esigmagimone\right) 
+  \Pr\left(\Ygi \middle| \alphac, \lambdacprime, \iotag, \Esigmagimone\right) 
   &= \frac{\Gamma\left(\alphac + \Ygi\right)}{\Gamma\left(\alphac\right) \Ygi!} 
-  \left(\frac{\psig \Esigmagimone}{\lambdacprime + \psig \Esigmagimone}\right)^\Ygi \left(1-\frac{\psig\Esigmagimone}{\lambdacprime + \psig \Esigmagimone}\right)^\alphac
+  \left(\frac{\iotag \Esigmagimone}{\lambdacprime + \iotag \Esigmagimone}\right)^\Ygi \left(1-\frac{\iotag\Esigmagimone}{\lambdacprime + \iotag \Esigmagimone}\right)^\alphac
 \intertext{or, equivalently}
 \label{eq:distYgSiteNseII}
 &= \frac{\Gamma\left(\alphac + \Ygi\right)}{\Gamma\left(\alphac\right) \Ygi!}
-  \left(\frac{\psig \Esigmagimone}{\lambdacprime + \psig \Esigmagimone}\right)^\Ygi \left(\frac{\lambdacprime}{\lambdacprime + \psig \Esigmagimone}\right)^\alphac
+  \left(\frac{\iotag \Esigmagimone}{\lambdacprime + \iotag \Esigmagimone}\right)^\Ygi \left(\frac{\lambdacprime}{\lambdacprime + \iotag \Esigmagimone}\right)^\alphac
 \end{align}
 where \ng is the number of amino acids encoded in gene $g$, i.e.~$\ng \ \sum_c \ngc$.
-As before, $\kappag \times \mg = \psig$ and $\lambdacprime = \lambdac \Ztheta/\Ytotal$.
+As before, $\kappag \times \mg = \iotag$ and $\lambdacprime = \lambdac \Ztheta/\Ytotal$.
 Note also that $\Ygi!$ can be dropped from any Likelihood calculations and that the \pgi terms used to calculate \Ztheta include $\sigma(i-1)$ terms.
-Further, note that $Z$ implicitly has the average value of $\psi_g$ in it and, so our choice of scale for $\psi_g$ will, in turn, scale, $Z$.
+Further, note that $Z$ implicitly has the average value of $\iotag$ in it and, so our choice of scale for $\iotag$ will, in turn, scale, $Z$.
 Thus, in this model we have both $\lambdac$ and $\lambdacprime$ and, as a result, we have an additional, genome wide parameter to estimate $U = \Ztheta/\Ytotal$.
 
-For completeness, we  define $\phig$ as the target production rate of the functionality produced by a complete, error free protein, i.e. $\phig = \psig \sigmag(\ng)$.
-Thus, in the absence of translation errors, $\phig$ is equal to the total synthesis rate protein $g$, $\psig$.
-In contrast, in the presence of translation errors, $\psig > \phig$ since the translation initiation rate must be elevated to compensate for the reduction in protein functionality due to translation errors.
+For completeness, we  define $\phig$ as the target production rate of the functionality produced by a complete, error free protein, i.e. $\phig = \iotag \sigmagng$.
+Thus, in the absence of translation errors, $\phig$ is equal to the total synthesis rate protein $g$, $\iotag$.
+In contrast, in the presence of translation errors, $\iotag > \phig$ since the translation initiation rate must be elevated to compensate for the reduction in protein functionality due to translation errors.
 Furthermore, while the NSE model requires the likelihood for each position be calculated separately, the underlying terms for $\Esigmagimone$ need only be calculated once per parameter evaluation since it is only how these terms are combined that varies between codons at different positions.
 
 %%INCOMPLETE ANALYSIS
-%If we have limited sampling such that $Z \gg Y$, then it would follow that $\lambdaprime \gg \psig \Esigmagimone$ and we'd get,
+%If we have limited sampling such that $Z \gg Y$, then it would follow that $\lambdaprime \gg \iotag \Esigmagimone$ and we'd get,
 %\begin{align}
 %\label{eq:distYgSiteNseLimitedSampling}
-%  \Pr\left(\Ygi \middle| \alphac, \lambdacprime, \psig, \Esigmagimone\right)
+%  \Pr\left(\Ygi \middle| \alphac, \lambdacprime, \iotag, \Esigmagimone\right)
 %&= \frac{\Gamma\left(\alphac + \Ygi\right)}{\Gamma\left(\alphac\right) \Ygi!}
-%  \left(\frac{\psig \Esigmagimone}{\lambdacprime + \psig \Esigmagimone}\right)^\Ygi \left(\frac{\lambdacprime}{\lambdacprime + \psig \Esigmagimone}\right)^\alphac\\
+%  \left(\frac{\iotag \Esigmagimone}{\lambdacprime + \iotag \Esigmagimone}\right)^\Ygi \left(\frac{\lambdacprime}{\lambdacprime + \iotag \Esigmagimone}\right)^\alphac\\
 %& \approx 
 
 
 \subsection*{Simulation}
 Unlike with the Pausing Time Model, we cannot aggregate codon specific RPF counts within a gene.
 Instead we have to simulate each position and as before we simulate in two steps.
-First, we generate $\Wgi$  from $\text{Gamma}(\alphac, \lambdacprime)$ and then we generate $\Ygi$ from $\text{Poisson}\left(\psi_g \, \sigmag(i-1)\, \Wgi\right)$.
+First, we generate $\Wgi$  from $\text{Gamma}(\alphac, \lambdacprime)$ and then we generate $\Ygi$ from $\text{Poisson}\left(\iotag \, \sigmag(i-1)\, \Wgi\right)$.
 Note we are using $\sigmagi$ as defined in Eq.~(\ref{eq:defSigmag}) and not $\Esigmagi$, because when simulating data, $\wgi$ is known and, as a result, integration is unnecessary.
-Note that $\psig$ values are scaled by the footprinting sequencing effort.
-Thus, we may find that you need scale all of your $\psig$ values up or down by a constant term such that the expected number of footprints is on par with the number observed for a given set of genes.
+Note that $\iotag$ values are scaled by the footprinting sequencing effort.
+Thus, we may find that you need scale all of your $\iotag$ values up or down by a constant term such that the expected number of footprints is on par with the number observed for a given set of genes.
 
 
 \section*{Parameter Definitions}
@@ -358,9 +366,9 @@ Thus, we may find that you need scale all of your $\psig$ values up or down by a
     \Mg & Observed mRNA counts from RNA-Seq data.             & 1/{Vol}\\  
     \kappag & Rate constant determining ribosome initiation rate per mRNA.  Function of diffusion of ribosomes, mRNA, and other factors. & $\frac{1}{\text{rib. mRNA Vol} t}$\\
     \phig & Target protein functionality production rate under a given set of conditions. 
-            Equal to $\mg \kappag \sigmag(\ng)$ which is initiation rate discounted by the expected functionality of a protein.& 1/t\\
-    \psig &  Rate of initiation of protein synthesis under a given set of conditions. 
-             Equal to $\mg \kappag = \phig/\sigmag(\ng)$ and, thus, is always greater than or equal to $\phig$. & 1/t\\ 
+            Equal to $\mg \kappag \sigmagng$ which is initiation rate discounted by the expected functionality of a protein.& 1/t\\
+    \iotag &  Rate of initiation of protein synthesis under a given set of conditions. 
+             Equal to $\mg \kappag = \phig/\sigmagng$ and, thus, is always greater than or equal to $\phig$. & 1/t\\ 
     \sigmagi & Probability ribosome reaches and successfully translate codon $i$. & \\
     \Esigmagi& Expectation of \sigmagi used when fitting model to data. & \\
 
