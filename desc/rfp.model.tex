@@ -19,11 +19,12 @@
 \newcommand{\wgi}{\ensuremath{\elongWaitTime_{g,i}}\xspace}
 \newcommand{\wgj}{\ensuremath{\elongWaitTime_{g,j}}\xspace}
 \newcommand{\wgc}{\ensuremath{\wc_{g}}\xspace}
-\newcommand{\WaitTerm}{\ensuremath{w}\xspace} %realization of random variate
-\newcommand{\Wc}{\ensuremath{\WaitTerm^c}\xspace}
-\newcommand{\Wgi}{\ensuremath{\WaitTerm_{g,i}}\xspace}
-\newcommand{\Wgj}{\ensuremath{\WaitTerm_{g,j}}\xspace}
-\newcommand{\Wgc}{\ensuremath{\Wc_{g}}\xspace}
+\newcommand{\WaitTerm}{\ensuremath{X}\xspace} %realization of random variate
+\newcommand{\Xc}{\ensuremath{\WaitTerm^c}\xspace}
+\newcommand{\Xg}{\ensuremath{\WaitTerm_g}\xspace}
+\newcommand{\Xgi}{\ensuremath{\WaitTerm_{g,i}}\xspace}
+\newcommand{\Xgj}{\ensuremath{\WaitTerm_{g,j}}\xspace}
+\newcommand{\Xgc}{\ensuremath{{\Xc}_{g}}\xspace}
 
 \newcommand{\alphai}{\ensuremath{{\alpha_i}}\xspace}
 \newcommand{\alphaj}{\ensuremath{{\alpha_j}}\xspace}
@@ -58,7 +59,7 @@
 \newcommand{\sigmag}{\ensuremath{\sigma_{g}}\xspace}
 \newcommand{\sigmagi}{\ensuremath{\sigma_{g}(i)}\xspace}
 \newcommand{\sigmagng}{\ensuremath{\sigma_{g}(\ng)}\xspace}
-\newcommand{\sigmagn}{\sigmagng}
+\newcommand{\sigmang}{\sigmagng}
 \newcommand{\Esigmagi}{\ensuremath{E\left[\sigma_{g}(i)\right]}\xspace}
 \newcommand{\Esigmai}{\ensuremath{E\left[\sigma(i)\right]}\xspace}
 \newcommand{\Esigmagimone}{\ensuremath{E\left[\sigma_{g}(i-1)\right]}\xspace}
@@ -97,7 +98,9 @@
 \newcommand{\Ygcvec}{\ensuremath{{\Vec{\Ygc}}}\xspace}
 \newcommand{\kappagvec}{\ensuremath{{\Vec{\kappag}}}\xspace}
 \newcommand{\ngcvec}{\ensuremath{{\Vec{\ngc}}}\xspace}
-\newcommand{\iotavec}{\ensuremath{{\Vec{\iotag}}}\xspace}
+\newcommand{\iotagvec}{\ensuremath{{\Vec{\iotag}}}\xspace}
+
+
 \begin{document}
 
 
@@ -159,7 +162,7 @@ One solution is to use the same approach in our other work and  scale time such 
 For our current model where we ignore nonsense errors, \sigmagng = 1 and, thus, $\phig = \kappag \mg$.
 An alternative would be to constrain $E_g\left(\kappag \mg\right) = 1$, i.e. independent of \sigmang.
 \footnote{Prior to 06 Mar 2019 we we used $\psi$ instead of $\iota$ (see below).
-  However, this use of $\psi$ was not wholly consistent with how $\psi$ was defined in \selac where $\psi$ is the  target protein functionality production rate so we've changed our notation.
+  However, this use of $\psi$ was not wholly consistent with how $\psi$ was defined in SelAC where $\psi$ is the  target protein functionality production rate so we've changed our notation.
   }
   
 To simplfy calculations we can derive an expected value for $\Ztheta$ as,
@@ -204,7 +207,7 @@ The total Likelihood of the data is
 Note that using RFP data alone, $\kappag \times \mg = \iotag$ and $\lambdacprime = \lambdac \Ztheta/\Ytotal$ are only identifiable as joint parameters. 
 (Although it seems like you should be able to calculate \Ztheta post-hoc from the state of the chain and estimates of \mg are available from other sources.)
 Most standard libraries require that the $x$ parameter in a NB be discrete, which in this case it is not.
-Thus to simulate \Yg values based on equations (\ref{eq:distYgSite}) or (\ref{eq:distYgCodon}), first pull $W$ from Gamma(\ngc \alphac, \lambdacprime)\footnote{recall that \lambdacprime is the 'rate' parameter}, then pull $Y$ from Poisson($W \iotag$).
+Thus to simulate \Yg values based on equations (\ref{eq:distYgSite}) or (\ref{eq:distYgCodon}), first pull $\Xgc$ from Gamma(\ngc \alphac, \lambdacprime)\footnote{recall that \lambdacprime is the 'rate' parameter.}, then pull $Y$ from Poisson($\Xgc \iotag$).
   
 \citet{PopEtAl2014} provide RNA-Seq based counts of mRNA abundances, \Mg, in addition to RFP counts.
 If we assume that $\Mg \sim \text{Poisson}(\Ytotal \mg)$, we can easily combine both the RFP and the mRNA counts together and estimate $\kappag$ and $\mg$ separately.
@@ -345,7 +348,7 @@ Furthermore, while the NSE model requires the likelihood for each position be ca
 \subsection*{Simulation}
 Unlike with the Pausing Time Model, we cannot aggregate codon specific RPF counts within a gene.
 Instead we have to simulate each position and as before we simulate in two steps.
-First, we generate $\Wgi$  from $\text{Gamma}(\alphac, \lambdacprime)$ and then we generate $\Ygi$ from $\text{Poisson}\left(\iotag \, \sigmag(i-1)\, \Wgi\right)$.
+First, we generate $\Xgi$  from $\text{Gamma}(\alphac, \lambdacprime)$ and then we generate $\Ygi$ from $\text{Poisson}\left(\iotag \, \sigmag(i-1)\, \Xgi\right)$.
 Note we are using $\sigmagi$ as defined in Eq.~(\ref{eq:defSigmag}) and not $\Esigmagi$, because when simulating data, $\wgi$ is known and, as a result, integration is unnecessary.
 Note that $\iotag$ values are scaled by the footprinting sequencing effort.
 Thus, we may find that you need scale all of your $\iotag$ values up or down by a constant term such that the expected number of footprints is on par with the number observed for a given set of genes.
@@ -380,7 +383,7 @@ Thus, we may find that you need scale all of your $\iotag$ values up or down by 
     \Ygi & Number of RFP observed for position $i$ in gene $g$ &\\
     \Ygc & Number of RFP observed for codon $c$ in gene $g$ &\\
     \Ytotal & Totalnumber of RFP in dataset.&\\
-    \lambdacprime& Composit parameter equal to $\lambdac Z/\Ytotal$ &\\
+    \lambdacprime& Composite parameter equal to $\lambdac Z/\Ytotal$ &\\
     $\pi_j$  & Prior probability for parameter $j$. & \\ \hline
   \end{tabulary}
    \caption{Table of model parameters}
