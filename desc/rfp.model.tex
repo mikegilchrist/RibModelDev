@@ -212,8 +212,9 @@ Thus to simulate \Yg values based on equations (\ref{eq:distYgSite}) or (\ref{eq
 \citet{PopEtAl2014} provide RNA-Seq based counts of mRNA abundances, \Mg, in addition to RFP counts.
 If we assume that $\Mg \sim \text{Poisson}(\Ytotal \mg)$, we can easily combine both the RFP and the mRNA counts together and estimate $\kappag$ and $\mg$ separately.
 Alternatively, we could estimate the composite \kappag \mg parameter using the RPF data and then analyze the those results using the \Mg data.
-
-\sout{An additional fact worth noting is that we are treating $Z$ as a constant for much of our calculations when, in fact, it is a random variate.}\marginpar{08/20/18: I don't think this is true.}
+An additional fact worth noting is that we are treating $Z$ as a constant for much of our calculations when, in fact, it is a random variate.
+% \sout{An additional fact worth noting is that we are treating $Z$ as a constant for much of our calculations when, in fact, it is a random variate.}\marginpar{08/20/18: I don't think this is true.
+%05/30/19: Update- no it is a random variate. Each position's expected wait time is a random variable and Z is a function of these times}
 We should discuss this with Russ to ensure there are no issues.
 
 %\subsection*{Simulation}
