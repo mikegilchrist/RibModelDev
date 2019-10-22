@@ -117,6 +117,10 @@ Added notes about expecting $\alphac > 0$.
   \item Added math analysis is partially documented in \texttt{rfp.math.nb} which was added to the repository.
   \item Added second order approximation of $\sigma_i$
   \end{itemize}
+\item 10/22/2019
+	\begin{itemize}
+	\item Alex: Added continued fraction representation for approximating upper incomplete gamma function
+	\end{itemize}
 \item Compiled on \today \ at \ \currenttime
  \end{itemize}
 \subsection*{Goal}
@@ -148,7 +152,8 @@ Regarding values of $\alphac$, no variation in waiting times between instances o
 Given that we expect heterogeneity between sites, we expect $\alphac > 1$.
 
 Assuming independence in sampling, the total probability of a randomly selected footprint is from position $i$, $\Pgi$, is
-\begin{equation} \label{eq:defPgi}
+\begin{equation} 
+\label{eq:defPgi}
 \Pgi = \pgi \mg/\Ztheta 
 \end{equation}
 where \mg is the density of \mRNAg in the cell and \Ztheta is a partition function that ensures our sampling probabilities across the transcriptome sums to 1 and is defined as,
@@ -312,6 +317,15 @@ The second order approximation is,
 \ln(\Esigmai) &= \sum_{j=1}^i \left[-\frac{E\left(\wj\right)}{\vj} + \frac{\Var\left(\wj\right)}{ \vj^2} + \frac{1}{2} \left(\frac{E\left(\wj\right)}{\vj}\right)^2\right]+ O(b^3)
 \end{align}
 which seems simpler to compute, but I am unsure if and when it would perform better.
+
+Another alternative implementation is to use a continued fractions approximation for the upper incomplete gamma.
+This is currently implemented in PANSEModel.cpp as PANSEModel::UpperIncompleteGammaHelper.
+Following notation from \href{http://functions.wolfram.com/GammaBetaErf/Gamma2/10/}{functions.wolfram.com},
+
+\begin{align}
+\label{eq:continuedFraction}
+\Gamma(a,z) &= \cfrac{z^ae^{-z}}{z + \cfrac{1 - a}{1 + \cfrac{1}{z + \cfrac{2 - a}{1 + \cfrac{2}{z+\cfrac{3 - a}{1 + \cfrac{3}{z + \cdots}}}}}}}
+\end{align}
 
 Noting that the reasoning which led to equations \ref{eq:defPgi} and \ref{eq:defZtheta} for the pausing time model should still apply if we use Equation (\ref{eq:defpgiNse}) for \pgi, rather than Equation (\ref{eq:defpgi}). 
 As a result,
