@@ -346,6 +346,8 @@ Further, note that $Z$ implicitly has the average value of $\iotag$ in it and, s
 Thus, in this model we have both $\lambdac$ and $\lambdacprime$ and, as a result, we have an additional, genome wide parameter to estimate $U = \Ztheta/\Ytotal$.
 
 For completeness, we  define $\phig$ as the target production rate of the functionality produced by a complete, error free protein, i.e. $\phig = \iotag \sigmagng$.
+(For completeness, we note that in SelON we measure functionality production rate which is $\phig \times B$ where $B$ is the functionality of a complete error free protein as encoded relative to the optimal sequence.
+Since we don't try to infer the optimal sequence here, $\psi$ is irrelevant.)
 Thus, in the absence of translation errors, $\phig$ is equal to the total synthesis rate protein $g$, $\iotag$.
 In contrast, in the presence of translation errors, $\iotag > \phig$ since the translation initiation rate must be elevated to compensate for the reduction in protein functionality due to translation errors.
 Furthermore, while the NSE model requires the likelihood for each position be calculated separately, the underlying terms for $\Esigmagimone$ need only be calculated once per parameter evaluation since it is only how these terms are combined that varies between codons at different positions.
