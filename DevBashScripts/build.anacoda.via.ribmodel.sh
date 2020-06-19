@@ -19,7 +19,7 @@
 
 if R CMD build RibModelFramework ; then
     echo "Build succeeded. Installing package";
-    MAKE="make -j8";
+    MAKE="make -j$(($(nproc)-1))"; #use 1 less than number of cores on machine
     if R CMD INSTALL -l ~/R/lib-dev $(ls -t AnaCoDa_*.tar.gz| head -1) ; then
 	echo "Install succeeded."
 	## test code
