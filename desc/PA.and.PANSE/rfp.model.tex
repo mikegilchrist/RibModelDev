@@ -118,9 +118,15 @@ Added notes about expecting $\alphac > 0$.
   \item Added second order approximation of $\sigma_i$
   \end{itemize}
 \item 10/22/2019
-	\begin{itemize}
-	\item Alex: Added continued fraction representation for approximating upper incomplete gamma function
-	\end{itemize}
+  \begin{itemize}
+  \item Alex: Added continued fraction representation for approximating upper incomplete gamma function
+  \end{itemize}
+\item  06/30/2020
+  \begin{itemize}
+  \item Added equation \ref{eq:verySimpleApprox} as a simpler approximation for $\vgi/(\vgi+\wgi)$ for equation \ref{eqn:defSigmaMag}.
+  \item Added note about how the integral function needs to use $\lambdac$, we can't use \lambdacprime.
+  \end{itemize}
+        
 \item Compiled on \today \ at \ \currenttime
  \end{itemize}
 \subsection*{Goal}
@@ -273,6 +279,8 @@ where $E_p(z)$ is the generalized exponential integral function (also referred t
 \end{equation}
 where $\Gamma(1-p,z)$ is the upper incomplete gamma function.
 See \href{http://dlmf.nist.gov/8.19}{http://dlmf.nist.gov/8.19} for more details.
+
+
 Note that, although the complete Gamma function is discontinous at negative interger values, the upper incomplete is well defined even at negative integers so long as $z>0$.
 
 Using this formulation, 
@@ -281,12 +289,14 @@ Using this formulation,
 E\left[\Pr(\text{Ribosome Sampled is at position $j$})\right] &= \exp\left[\lambdaj \vj\right] \left(\lambdaj \vj\right)^\alphaj  \Gamma(1-\alphaj, \lambdaj \vj)
 \end{align}
 
+
 Assuming independence in \wgi between positions means that the expected value of $\sigmag(i)$ is, 
 \begin{align}
 \label{eq:defESigma}
   \Esigmai &=  \exp\left[\sum_{j=1}^i \lambdaj \vj\right]  \prod_{j=1}^{i}\left(\lambdaj \vj  E_{\alphaj}\left(\lambdaj \vj\right) \right)
 \end{align}
 Note that these \lambdaj terms are equivalent to \lambdac (but not \lambdacprime, which is used below).
+Because the calculations use nonlinear functions, we can't really use \lambdacprime as a substitute and, insteads, need to estimate $Z$.
 
 To approximate \Esigmagi, we set $\vi = 1/(c_i b)$ where $c_i$ is a codon specific scaling factor which we assume $c_i>0$ and define $\sum_i^n c_i = 1$ such that $b = f(\vec{v})=  1/n \sum_i^n 1/\vi$ is the mean nonsense error rate.
 We could, alternatively, define $\prod_i^n c_j = 1$ which would make $b = f(\vec{v}) =  \prod_i^n (1/\vi)^{1/n}$ the geometric mean of $1/vi$.
@@ -326,6 +336,15 @@ Following notation from \href{http://functions.wolfram.com/GammaBetaErf/Gamma2/1
 \label{eq:continuedFraction}
 \Gamma(a,z) &= \cfrac{z^ae^{-z}}{z + \cfrac{1 - a}{1 + \cfrac{1}{z + \cfrac{2 - a}{1 + \cfrac{2}{z+\cfrac{3 - a}{1 + \cfrac{3}{z + \cdots}}}}}}}
 \end{align}
+
+One could ignore the fact that $w$ is a RV and, instead use it's expected value, i.e.~replace $\wgj$ with $\alpha/\lambda$ and equation \ref{eqn:defSigmaMag} becomes
+\begin{equation} \label{eq:verySimpleApprox}
+ \sigma\left(i-1\right) \approx \prod_{j=1}^{i-1} \frac{\vj}{\alpha/\lambda + \vj}
+\end{equation}
+In addition, there are likely simple, rule of thumb extensions we could do that would increase the precision (or help us bound the precision).
+This approximation may be useful at the start of a run as well or to find good ICs.
+On further reflection, it seems to make sense to work on the $\lammbdac$ scale and then use that to calculate $Z$ and $\lambdacprime$.
+
 
 Noting that the reasoning which led to equations \ref{eq:defPgi} and \ref{eq:defZtheta} for the pausing time model should still apply if we use Equation (\ref{eq:defpgiNse}) for \pgi, rather than Equation (\ref{eq:defpgi}). 
 As a result,
