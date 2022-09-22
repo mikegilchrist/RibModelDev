@@ -20,7 +20,6 @@
 rVersion=$(Rscript -e 'paste0(R.version$major, ".", sub("\\.[0-9]+", "", R.version$minor))')
 installDir="~/R/lib/rVersion-dev/"
 
-
 if R CMD build RibModelFramework ; then
     echo "Build succeeded. Installing package";
     MAKE="make -j$(($(nproc)-1))"; #use 1 less than number of cores on machine
