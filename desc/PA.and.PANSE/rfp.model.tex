@@ -54,6 +54,8 @@
 \newcommand{\vi}{\ensuremath{\nseWaitTime_{i}}\xspace}
 \newcommand{\vj}{\ensuremath{\nseWaitTime_{j}}\xspace}
 \newcommand{\vk}{\ensuremath{\nseWaitTime_{k}}\xspace}
+\newcommand{\cgi}{\ensuremath{c_{g,i}}\xspace}
+\newcommand{\bi}{\ensuremath{b_{i}}\xspace}
 \newcommand{\betac}{\ensuremath{{\beta_c}}\xspace}
 \newcommand{\muc}{\ensuremath{{\mu_c}}\xspace}
 \newcommand{\sigmag}{\ensuremath{\sigma_{g}}\xspace}
@@ -289,6 +291,7 @@ Using this formulation,
 E\left[\Pr(\text{Ribosome Sampled is at position $j$})\right] &= \exp\left[\lambdaj \vj\right] \left(\lambdaj \vj\right)^\alphaj  \Gamma(1-\alphaj, \lambdaj \vj)
 \end{align}
 
+Note that the model can be reformulated uisng $\cgi = 1/wgi$ and $\bi = 1/\vi$ so long as we assume $\cgi \sim \text{InverseGamma}(\alphai, \lambdai)$.
 
 Assuming independence in \wgi between positions means that the expected value of $\sigmag(i)$ is, 
 \begin{align}
@@ -343,7 +346,7 @@ One could ignore the fact that $w$ is a RV and, instead use it's expected value,
 \end{equation}
 In addition, there are likely simple, rule of thumb extensions we could do that would increase the precision (or help us bound the precision).
 This approximation may be useful at the start of a run as well or to find good ICs.
-On further reflection, it seems to make sense to work on the $\lammbdac$ scale and then use that to calculate $Z$ and $\lambdacprime$.
+On further reflection, it seems to make sense to work on the $\lambdac$ scale and then use that to calculate $Z$ and $\lambdacprime$.
 
 
 Noting that the reasoning which led to equations \ref{eq:defPgi} and \ref{eq:defZtheta} for the pausing time model should still apply if we use Equation (\ref{eq:defpgiNse}) for \pgi, rather than Equation (\ref{eq:defpgi}). 
