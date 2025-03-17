@@ -390,6 +390,31 @@ Note that $\iotag$ values are scaled by the footprinting sequencing effort.
 Thus, we may find that you need scale all of your $\iotag$ values up or down by a constant term such that the expected number of footprints is on par with the number observed for a given set of genes.
 
 
+\subsection*{Adjusting Z after proposing parameter}
+
+Assume that we are proposing parameters $\alpha$ and $\lambda$ and that $\iota_g$ is known.
+Referring back to equation \ref{eq:defZtheta} and \ref{eq:defpgiNseApproximation}, then Z under nonsense errors approximately equals
+
+\begin{align}
+Z &= \sum_g \mg \left(\sum_i \pgi\right)\\
+ & = \sum_g \iota_g \left(\sum_i \sigma(i-1) \wgi \right) \\
+\end{align}
+
+Can we calculate Z directly each time we propose new parameters?
+Given that we have the current values for $\alpha$ and $\lambda$, we could substitute the expectation $\alpha/\lambda$ for the random value $wgi$.
+This would also allow us to calculate $\sigma(i-1)$ based on \ref{eq:defSigmag} using the current values of $\vj$ and $\alpha/\lambda$.
+However, $\wgi$ and $\sigma(i-1)$ are really random variables.
+If we think about the expectation of Z
+
+\begin{align}
+E[Z] &= \sum_g \iota_g \left(\sum_i E[\sigma(i-1) \wgi] \right)
+\end{align}
+
+Unfortunately, the random variable $\sigma(i-1)$ is a function of random variable $\wgi$ for all $i$, thus $E[\sigma(i-1)(\wgi)] \neq \sigma(i-1)(E[\wgi])$ (at least in general).
+There is also the issue of non-independence of $\sigma(i-1)$ and $\wgi$, so $E[\sigma(i-1) \wgi] \neq E[\sigma(i-1)]E[\wgi]$.
+Instead 
+
+
 \section*{Parameter Definitions}
 \label{paramDefs}
 \setlength\tymin{30pt}  %minimum column width
