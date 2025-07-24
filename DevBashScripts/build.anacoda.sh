@@ -17,10 +17,11 @@
 #
 #  Local install
 
-if R CMD build AnaCoDa ; then
+TARGET="~/R/lib-dev"
+if R CMD build AnaCoDa; then
     echo "Build succeeded. Installing package";
     MAKE="make -j8";
-    if R CMD INSTALL -l ~/R/lib-dev $(ls -t AnaCoDa_*.tar.gz| head -1) ; then
+    if R CMD INSTALL -l $TARGET $(ls -t AnaCoDa_*.tar.gz| head -1) ; then
 	echo "Install succeeded."
 	## test code
 	cd AnaCoDa/tests;
